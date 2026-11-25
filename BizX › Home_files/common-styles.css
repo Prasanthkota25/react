@@ -1,0 +1,301 @@
+﻿body {
+    word-wrap: break-word;
+}
+
+input[type=text]:-webkit-autofill {
+    -webkit-box-shadow: none !important;
+}
+
+input[type=text]:-webkit-autofill, *:focus {
+    -webkit-box-shadow: none !important;
+    outline: none !important;
+}
+
+textarea, input[type=text], *:focus {
+    outline: none !important;
+}
+
+a.pgeBack mat-icon .material-icons {
+    font-size: 15px;
+}
+
+a.pgeBack mat-icon {
+    width: 15px;
+    height: 15px;
+}
+
+a.pgeBack:hover {
+    color: #795548;
+    text-decoration: none;
+}
+
+span.spgeBack {
+    float: right;
+}
+
+.SubHead {
+    display: inline-block;
+    width: 100%;
+}
+
+.dataTableScroll {
+    overflow-x: scroll;
+}
+
+    .dataTableScroll .mat-cell, .dataTableScroll .mat-header-cell {
+        flex: 1;
+        overflow: visible !important;
+        /*word-wrap: normal !important;*/
+        min-width: 150px;
+    }
+
+    .dataTableScroll .mat-table {
+        width: auto !important;
+    }
+
+h4.SubHead a:hover {
+    text-decoration: none;
+}
+
+button.smlBtnFilterArea {
+    min-width: 1px;
+    line-height: 22px;
+    color: #fff;
+    font-size: 18px;
+}
+
+.bizXPagination {
+    text-align: right;
+}
+
+mat-cell.cdk-column-symptom {
+    /*max-height: 50px;
+    overflow: auto;*/
+}
+
+mat-cell.scrll-description-area {
+    /* max-height: 50px;
+    overflow-y: auto;*/
+}
+
+mat-row.mat-row.sclick {
+    cursor: pointer;
+}
+
+    mat-row.mat-row.sclick:hover {
+        background: #fbff92;
+    }
+
+.container-fluid div, .container-fluid table {
+    font-size: 11px;
+}
+
+.mat-cell {
+    font-size: 11px;
+}
+
+.RitFilterArea i.fa {
+    color: #fff;
+}
+
+.container-fluid .mat-button, .container-fluid .mat-fab, .container-fluid .mat-icon-button, .container-fluid .mat-mini-fab, .container-fluid .mat-raised-button {
+    line-height: 30px;
+    min-width: auto;
+    font-size: 11px;
+    /*font-weight: bold;*/
+}
+
+.mat-menu-panel .mat-menu-item {
+    line-height: 30px;
+    height: 30px;
+    font-size: 11px;
+}
+
+.tmeclr {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    padding: 5px;
+    margin-right: 6px;
+    border-radius: 50%;
+}
+
+    .tmeclr.tm-1 {
+        background: #9cdeec;
+    }
+
+    .tmeclr.tm-2 {
+        background: #8072ef;
+    }
+
+    .tmeclr.tm-3 {
+        background: #1b2330;
+    }
+
+    .tmeclr.tm-4 {
+        background: #102D70;
+    }
+
+    .tmeclr.tm-5 {
+        background: #0088CC;
+    }
+
+.container-fluid mat-expansion-panel-header {
+    font-size: 13px;
+}
+
+mat-expansion-panel-header mat-icon.material-icons {
+    height: 20px;
+    width: 24px;
+    font-size: 18px;
+}
+
+mat-expansion-panel-header i.material-icons {
+    font-size: 18px;
+}
+
+.container-fluid .mat-card {
+    padding: 12px 24px;
+}
+
+.paddingZro .col-xs-12.col-md-8, .paddingZro .col-xs-12.col-md-4, .paddingZro .col-xs-12.col-md-8 {
+    padding: 0 4px;
+}
+
+.container-fluid hr {
+    border: 1px solid #d2d2d2;
+    margin: 8px 0;
+}
+
+.wrap {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    word-wrap: break-word;
+}
+
+.emp-info-blk span {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    word-wrap: break-word;
+}
+
+.viw-stle-1 {
+    color: #0D46B3;
+}
+
+.viw-stle-2 {
+    color: #F01313;
+}
+
+.viw-stle-3 {
+    color: #e12727;
+}
+
+.container-fluid div mat-icon.auto-drp-dwn {
+    top: 5px;
+    position: relative;
+    color: #757575;
+    cursor: pointer;
+    font-size: 2.3em;
+}
+
+mat-form-field.auto-full-width {
+    width: 64%;
+}
+
+.alert-red-btn button, .alert-green-btn button, .alert-amber-btn button {
+    background: #fff;
+}
+
+.cust-validation.ng-touched.ng-invalid {
+    border: 1px solid red;
+}
+
+.asterik-mark {
+    color: red;
+}
+
+.alrt-success {
+    background: #28a745;
+}
+
+.alrt-info {
+    background: #17a2b8;
+}
+
+snack-bar-container.alrt-warning-info {
+    background: #ffc107;
+    max-width: 100%;
+}
+
+@supports (-ms-ime-align:auto) {
+    .mat-input-container {
+        width: 180px;
+    }
+}
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .LftPaginationArea {
+        float: left;
+    }
+}
+
+h4.SubHead.SGsubHead {
+    font-weight: 500;
+}
+
+.container-fluid .SGPages div {
+    font-size: 12px;
+}
+
+.container-fluid .SGPages button.blu-btn {
+    font-size: 12px;
+}
+
+.container-fluid .SGPages button.org-btn {
+    font-size: 12px;
+}
+
+.mat-select .mat-select-value-text {
+    white-space: normal;
+}
+
+.logoloaderDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.mac-os .root-level-1 {
+    width: 95% !important;
+}
+
+.divApprovals .approvalLevel-header.approved {
+    background-color: #60bb1a;
+}
+
+.divApprovals .approvalLevel-header.pending {
+    background-color: #e0b206;
+}
+
+.divApprovals .approvalLevel-header.rejected {
+    background-color: #ec5c16;
+}
+
+.tableListViewHeader .pagination > li:last-child > span {
+    border-radius: 2px;
+}
+
+.tableListViewHeader .pagination {
+    margin: 12px 0;
+}
+
+    .tableListViewHeader .pagination li {
+        float: left;
+    }
+
+        .tableListViewHeader .pagination li.page-item mat-icon {
+            color: #fff;
+        }

@@ -1,0 +1,30 @@
+Aqua - 
+
+ Misty - 
+	
+
+Mustang - 
+
+
+
+
+hover colors 
+
+
+
+Aqua -
+	right side panel  -       background: #679EB3;
+	 left side panel  -       background: #A4B3B6;
+
+ Misty -  home content aera  -        background: #c1a2e0;
+                                      color: #fff;
+
+	 right side panel  -  background: #2A1B3C;
+	 left side panel  -   background: #A4B3B6;
+	
+
+Mustang - home content aera  -     background: #1b2330;
+  				   color: #fff;
+
+	 right side panel  -   background: #31486a;
+	 left side panel  -    background: #2b405f;

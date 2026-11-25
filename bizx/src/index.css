@@ -1,0 +1,32 @@
+/* Dark navy theme matching screenshot */
+:root {
+  --bg-dark: #1a2a3a;
+  --bg-panel: #1e3448;
+  --text-light: #ffffff;
+  --accent: #2e86ab;
+}
+
+.navbar {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.footer {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  text-align: center;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  gap: 10px;
+  padding: 20px;
+  min-height: calc(100vh - 100px);
+  background: var(--bg-panel);
+}

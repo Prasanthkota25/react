@@ -1,0 +1,369 @@
+React Basic Commands Cheat Sheet
+
+1. Check Node.js Version
+
+
+node --version
+or
+node -v
+
+
+
+2. Check npm Version
+
+npm --version
+or
+npm -v
+
+
+
+
+
+
+3. Create a React App
+
+
+Using Create React App (CRA)
+
+npx create-react-app my-app
+or
+npx create-react-app student-app
+
+
+
+
+
+4. Go Inside the Project Folder
+
+
+
+cd my-app
+or
+cd student-app
+
+
+5. Start the React App
+
+npm start
+
+ex : http://localhost:3000
+
+
+
+6. Check React Version
+
+npm list react
+
+ex: react@19.1.0
+
+7. Check React + React DOM Version
+
+npm list react react-dom
+
+
+
+8. Stop the React Server
+CTRL + C
+Y
+
+
+9. Open the Project in VS Code
+
+code .
+
+
+or 
+If code does not work:
+
+Open VS Code manually
+Click:
+File → Open Folder
+
+
+
+10. Install a Package
+
+Example: install Axios
+
+
+npm install axios
+
+
+
+
+11. Run Build for Production
+npm run build
+
+
+
+
+
+12. Create React App Using Modern Method (Recommended)
+
+Today many developers use Vite instead of CRA.
+
+Create React App with Vite
+
+
+
+npm create vite@latest
+
+or 
+
+cd project-name
+npm install
+npm run dev
+
+
+
+
+
+13. Most Important Daily Commands
+
+
+
+
+Purpose			Command
+Check Node version	node -v
+Check npm version	npm -v
+Create React app	npx create-react-app my-app
+Open project		cd my-app
+Start app		npm start
+Check React version	npm list react
+Install package		npm install package-name
+Stop server		CTRL + C
+
+14. Simple React Workflow
+
+npx create-react-app my-app
+cd my-app
+npm start
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+# VS Code + React Useful Commands
+
+## 1. Open VS Code
+
+### Open current folder in Visual Studio Code
+
+```bash id="cmxt0m"
+code .
+```
+
+---
+
+# 2. Create React Project
+
+```bash id="nvtg18"
+npx create-react-app my-app
+```
+
+---
+
+# 3. Open React Project in VS Code
+
+```bash id="zq7lrh"
+cd my-app
+code .
+```
+
+---
+
+# 4. Start React App
+
+Inside VS Code terminal:
+
+```bash id="h56x5w"
+npm start
+```
+
+Runs app at:
+
+```plaintext id="gq1x0q"
+http://localhost:3000
+```
+
+---
+
+# 5. Stop React Server
+
+Press:
+
+```plaintext id="8x6s92"
+CTRL + C
+```
+
+Then press:
+
+```plaintext id="s3yr4g"
+Y
+```
+
+---
+
+# 6. Check React Version
+
+```bash id="j7g6yr"
+npm list react
+```
+
+---
+
+# 7. Check Node Version
+
+```bash id="kgbob0"
+node -v
+```
+
+---
+
+# 8. Check npm Version
+
+```bash id="5x7m2w"
+npm -v
+```
+
+---
+
+# 9. Install Packages
+
+Example:
+
+```bash id="sowt8e"
+npm install axios
+```
+
+---
+
+# 10. Install Multiple Packages
+
+```bash id="2ph1f7"
+npm install axios react-router-dom
+```
+
+---
+
+# 11. Run React Build
+
+```bash id="1jq4fp"
+npm run build
+```
+
+---
+
+# 12. Open Terminal in VS Code
+
+Shortcut:
+
+| OS            | Shortcut   |
+| ------------- | ---------- |
+| Windows/Linux | `Ctrl + ~` |
+| Mac           | `Cmd + ~`  |
+
+---
+
+# 13. Create Component File
+
+Inside `src` folder:
+
+```plaintext id="x5m8fb"
+src/
+ ├── App.js
+ ├── Header.js
+```
+
+Example component:
+
+```jsx id="5a8tga"
+function Header() {
+  return <h1>Hello React</h1>;
+}
+
+export default Header;
+```
+
+---
+
+# 14. Use Component in App.js
+
+```jsx id="u5h1r8"
+import Header from './Header';
+
+function App() {
+  return (
+    <div>
+      <Header />
+    </div>
+  );
+}
+
+export default App;
+```
+
+---
+
+# 15. Save and Auto Reload
+
+When you save files:
+
+* React automatically refreshes the browser.
+
+Shortcut to save:
+
+```plaintext id="o9g3eq"
+CTRL + S
+```
+
+---
+
+# 16. Install VS Code Extensions for React
+
+Useful extensions in Visual Studio Code:
+
+* ES7+ React/Redux snippets
+* Prettier
+* Auto Rename Tag
+* Bracket Pair Colorizer
+
+Extensions Marketplace:
+
+[VS Code Extensions Marketplace](https://marketplace.visualstudio.com/vscode?utm_source=chatgpt.com)
+
+---
+
+# 17. Most Used React Terminal Commands
+
+| Purpose             | Command                       |
+| ------------------- | ----------------------------- |
+| Create app          | `npx create-react-app my-app` |
+| Open folder         | `code .`                      |
+| Start app           | `npm start`                   |
+| Install package     | `npm install package-name`    |
+| Check React version | `npm list react`              |
+| Build app           | `npm run build`               |
+| Stop server         | `CTRL + C`                    |
+
+---
+
+# 18. Modern React Command (Recommended)
+
+Using Vite:
+
+```bash id="3fq1k9"
+npm create vite@latest
+```
+
+Then:
+
+```bash id="77kh8q"
+cd project-name
+npm install
+npm run dev
+```

@@ -1,0 +1,1025 @@
+import React from "react";
+import {
+  Card,
+  CardContent,
+  TextField,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  Typography,
+  Autocomplete,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
+
+const ApplyLeave = ({
+  EmployeeResult,
+  LeaveTypeList,
+  approvedCompOffList,
+  filteredList,
+  selectedEmployee,
+  dataSource,
+  displayedColumns,
+  editpageflag,
+  isCompOff,
+  leaveType,
+  leaveBalance,
+  daysofleave,
+  hidesession,
+  disableSession,
+  isLoadingResults,
+
+  LeaveTypeId,
+  compOffRequestMasterId,
+  startDate,
+  endDate,
+  sessionId,
+  address,
+  employeeRemarks,
+  leaveccto,
+
+  backClick,
+  LeaveTypeChangeEvent,
+  CompOffChangeEvent,
+  SessionChangeEvent,
+  onLeaveSubmit,
+  ResetApplyLeave_button,
+  selectEmployee,
+  removeEmployee,
+  EditLeave,
+}) => {
+  return (
+    <>
+      <Card>
+        <CardContent>
+
+          {/* Header */}
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <Typography variant="h5">
+              Apply Leave
+            </Typography>
+
+            <Button onClick={backClick}>
+              Back
+            </Button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={onLeaveSubmit}>
+            <div className="row">
+
+              {/* Employee Name */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  label="Employee Name"
+                  value={EmployeeResult?.fullName || ""}
+                  InputProps={{ readOnly: true }}
+                />
+              </div>
+
+              {/* Leave Type */}
+              <div className="col-md-3">
+                <FormControl fullWidth>
+                  <InputLabel>Leave Type</InputLabel>
+                  <Select
+                    value={LeaveTypeId || ""}
+                    label="Leave Type"
+                    onChange={(e) =>
+                      LeaveTypeChangeEvent(e.target.value)
+                    }
+                    disabled={editpageflag}
+                  >
+                    {LeaveTypeList?.map((item) => (
+                      <MenuItem
+                        key={item.leaveConfiguraionId}
+                        value={item.leaveConfiguraionId}
+                      >
+                        {item.leaveName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+
+              {/* Comp Off */}
+              {isCompOff && (
+                <div className="col-md-3">
+                  <FormControl fullWidth>
+                    <InputLabel>Comp-Off Date</InputLabel>
+                    <Select
+                      value={compOffRequestMasterId || ""}
+                    >
+                      {approvedCompOffList?.map((item) => (
+                        <MenuItem
+                          key={item.leaveRequestMasterId}
+                          value={item.leaveRequestMasterId}
+                          onClick={() =>
+                            CompOffChangeEvent(item.dateOfWork)
+                          }
+                        >
+                          {new Date(
+                            item.dateOfWork
+                          ).toLocaleDateString()}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+              )}
+
+              {/* Leave Balance */}
+              {leaveType !== "LOP" &&
+                leaveType !== "Comp-Off Leave" && (
+                  <div className="col-md-3">
+                    <TextField
+                      fullWidth
+                      label="Leave Balance"
+                      value={leaveBalance || ""}
+                      InputProps={{ readOnly: true }}
+                    />
+                  </div>
+                )}
+
+              {/* From Date */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="From Date"
+                  value={startDate || ""}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </div>
+
+              {/* To Date */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="To Date"
+                  value={endDate || ""}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </div>
+
+              {/* Session */}
+              {!hidesession && (
+                <div className="col-md-3">
+                  <FormControl fullWidth>
+                    <InputLabel>Session</InputLabel>
+                    <Select
+                      value={sessionId || ""}
+                      label="Session"
+                      disabled={disableSession}
+                      onChange={SessionChangeEvent}
+                    >
+                      <MenuItem value={3}>
+                        Full Day
+                      </MenuItem>
+                      <MenuItem value={1}>
+                        Half Day (First Half)
+                      </MenuItem>
+                      <MenuItem value={2}>
+                        Half Day (Second Half)
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
+              )}
+
+              {/* Days of Leave */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  label="Days of Leave"
+                  value={daysofleave || ""}
+                  InputProps={{ readOnly: true }}
+                />
+              </div>
+
+              {/* Approver */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  label="Approver"
+                  value={EmployeeResult?.managerName || ""}
+                  InputProps={{ readOnly: true }}
+                />
+              </div>
+
+              {/* Address */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Contact Address"
+                  value={address || ""}
+                />
+              </div>
+
+              {/* Contact Number */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  label="Contact Number"
+                  value={EmployeeResult?.mobileNo || ""}
+                />
+              </div>
+
+              {/* CC To */}
+              <div className="col-md-3">
+                <Autocomplete
+                  options={filteredList || []}
+                  getOptionLabel={(option) =>
+                    `${option.fullName}-${option.employeeNo}`
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="CC To"
+                    />
+                  )}
+                  onChange={(e, value) =>
+                    value && selectEmployee(value)
+                  }
+                />
+
+                <div className="mt-2">
+                  {selectedEmployee?.map((emp) => (
+                    <div
+                      key={emp.employeeNo}
+                      className="chip"
+                    >
+                      {emp.fullName}
+                      <Button
+                        size="small"
+                        onClick={() =>
+                          removeEmployee(emp)
+                        }
+                      >
+                        X
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reason */}
+              <div className="col-md-3">
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Reason to Apply Leave"
+                  value={employeeRemarks || ""}
+                />
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="text-end mt-4">
+              <Button
+                variant="outlined"
+                onClick={ResetApplyLeave_button}
+                sx={{ mr: 2 }}
+              >
+                Reset
+              </Button>
+
+              <Button
+                variant="contained"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
+
+          {/* Leave History */}
+          <Typography
+            variant="h6"
+            sx={{ mt: 5, mb: 2 }}
+          >
+            Leave History
+          </Typography>
+
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Leave Type</TableCell>
+                  <TableCell>From Date</TableCell>
+                  <TableCell>To Date</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Request Type</TableCell>
+                  <TableCell>No. of Days</TableCell>
+                  <TableCell>Reason</TableCell>
+                  <TableCell>Approver Remarks</TableCell>
+                  <TableCell>Action</TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {dataSource?.map((row, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{row.leaveName}</TableCell>
+
+                    <TableCell>
+                      {row.leaveTransactionList?.startDate}
+                    </TableCell>
+
+                    <TableCell>
+                      {row.leaveTransactionList?.endDate}
+                    </TableCell>
+
+                    <TableCell>
+                      {
+                        row.leaveTransactionList
+                          ?.statusValue
+                      }
+                    </TableCell>
+
+                    <TableCell>
+                      {row.leaveTransactionList
+                        ?.requestType ===
+                      "Leave Application"
+                        ? "Leave Request"
+                        : "Cancel Request"}
+                    </TableCell>
+
+                    <TableCell>
+                      {
+                        row.leaveTransactionList
+                          ?.noOfDays
+                      }
+                    </TableCell>
+
+                    <TableCell>
+                      {
+                        row.leaveTransactionList
+                          ?.employeeRemarks
+                      }
+                    </TableCell>
+
+                    <TableCell>
+                      {
+                        row.leaveTransactionList
+                          ?.approvalRemarks
+                      }
+                    </TableCell>
+
+                    <TableCell>
+                      <Button
+                        color="error"
+                        onClick={() =>
+                          EditLeave(row)
+                        }
+                      >
+                        Cancel
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {(!dataSource ||
+            dataSource.length === 0) && (
+            <Typography
+              align="center"
+              sx={{ mt: 4 }}
+            >
+              No data found...
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+
+      {isLoadingResults && (
+        <div className="loading-shade">
+          <CircularProgress />
+        </div>
+      )}
+    </>
+  );
+};
+
+export default ApplyLeave;
+
+
+
+nd 
+
+
+import React from "react";
+
+const LeaveBalanceSummary = ({
+  IsEmployee,
+  employee,
+  filteredEmployeeList = [],
+  Year,
+  yearList = [],
+  LeaveBalanceSummaryData = [],
+  isLoadingResults,
+
+  filterCoreHREmployee,
+  selectEmployee,
+  getLeaveBalanceSummaryByYear,
+  viewLeaveSummaryDetails,
+  viewLeaveGrantedDetails,
+  setEmployee,
+}) => {
+  return (
+    <>
+      <div className="card">
+        <div className="card-body">
+
+          {/* Header */}
+          <div className="row align-items-center mb-4">
+
+            <div className="col-md-3">
+              <h4 className="SubHead mb-0">
+                Leave Balance Summary
+              </h4>
+            </div>
+
+            {IsEmployee && (
+              <div className="col-md-9">
+
+                <div
+                  className="position-relative"
+                  style={{ maxWidth: "350px" }}
+                >
+                  <div className="input-group">
+
+                    <span className="input-group-text">
+                      <i className="fa-solid fa-user-tie"></i>
+                    </span>
+
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search Employee"
+                      autoComplete="off"
+                      value={employee}
+                      onChange={(e) => {
+                        setEmployee(e.target.value);
+                        filterCoreHREmployee(
+                          e.target.value,
+                          -1
+                        );
+                      }}
+                    />
+                  </div>
+
+                  {filteredEmployeeList.length > 0 && (
+                    <div
+                      className="position-absolute bg-white border shadow-sm w-100"
+                      style={{
+                        zIndex: 1000,
+                        top: "100%",
+                      }}
+                    >
+                      <ul className="list-group list-group-flush">
+
+                        {filteredEmployeeList.map(
+                          (item, index) => (
+                            <li
+                              key={index}
+                              className="list-group-item list-group-item-action"
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                selectEmployee(item)
+                              }
+                            >
+                              {item.fullName} -{" "}
+                              {item.employeeNo}
+                            </li>
+                          )
+                        )}
+
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            )}
+
+          </div>
+
+          {/* Year Dropdown */}
+
+          <div className="row mb-4">
+            <div className="col-md-2">
+
+              <label className="form-label">
+                Select Year
+              </label>
+
+              <select
+                className="form-select"
+                value={Year}
+                onChange={(e) =>
+                  getLeaveBalanceSummaryByYear(
+                    e.target.value
+                  )
+                }
+              >
+                {yearList.map((year) => (
+                  <option
+                    key={year}
+                    value={year}
+                  >
+                    {year}
+                  </option>
+                ))}
+              </select>
+
+            </div>
+          </div>
+
+          {/* Summary Table */}
+
+          {LeaveBalanceSummaryData.length > 0 ? (
+            <div className="table-responsive">
+
+              <table className="table table-bordered table-hover">
+
+                <thead className="table-light">
+                  <tr>
+                    <th>Leave Type</th>
+                    <th>Opening Balance</th>
+                    <th>Earned</th>
+                    <th>Applied</th>
+                    <th>Approved</th>
+                    <th>Cancelled</th>
+                    <th>
+                      Available Leave Balance
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  {LeaveBalanceSummaryData.map(
+                    (leave, index) => (
+                      <tr key={index}>
+
+                        <td>
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 text-decoration-none"
+                            onClick={() =>
+                              viewLeaveSummaryDetails(
+                                leave.id
+                              )
+                            }
+                          >
+                            {leave.leaveType}
+                          </button>
+                        </td>
+
+                        <td>
+                          {leave.openingBalance}
+                        </td>
+
+                        <td>
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 text-decoration-none"
+                            onClick={() =>
+                              viewLeaveGrantedDetails(
+                                leave.id
+                              )
+                            }
+                          >
+                            {leave.granted}
+                          </button>
+                        </td>
+
+                        <td>{leave.applied}</td>
+
+                        <td>{leave.availed}</td>
+
+                        <td>{leave.cancelled}</td>
+
+                        <td>
+                          {leave.availableBalance}
+                        </td>
+
+                      </tr>
+                    )
+                  )}
+
+                </tbody>
+
+              </table>
+
+            </div>
+          ) : (
+            <h2 className="text-center m-4">
+              No records found...
+            </h2>
+          )}
+
+        </div>
+      </div>
+
+      {/* Loading Spinner */}
+
+      {isLoadingResults && (
+        <div className="loading-shade text-center">
+
+          <div
+            className="spinner-border text-primary"
+            role="status"
+          >
+            <span className="visually-hidden">
+              Loading...
+            </span>
+          </div>
+
+        </div>
+      )}
+    </>
+  );
+};
+
+export default LeaveBalanceSummary;
+
+
+nd
+
+
+
+
+import React from "react";
+
+const MyTeamLeave = ({
+  pageNumber,
+  pageSize,
+  filterValue,
+  Leavestatustypevalue,
+  dataSource = [],
+  maxLength = 50,
+  isLoadingResults,
+
+  previousPage,
+  nextPage,
+  changePageData,
+  applyFilter,
+  expExcel,
+  FilteredDataBySelectedDropdownValue,
+  onEnterKeyPress,
+  UpdateLeaveStatus,
+  toggleShowReason,
+  toggleShowApproverRemarks,
+  textAreaEmpty,
+}) => {
+  return (
+    <>
+      <div className="card">
+        <div className="card-body">
+
+          <h4 className="SubHead mb-3">My Team Leave</h4>
+
+          {/* Header Section */}
+          <div className="tableListViewHeader d-flex justify-content-between mb-3">
+
+            {/* Pagination */}
+            <div className="LftPaginationArea">
+              <ul className="pagination form-inline align-items-center">
+
+                <li className="page-item">
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    disabled={pageNumber === 1}
+                    onClick={previousPage}
+                  >
+                    ◀
+                  </button>
+                </li>
+
+                <li className="mx-2">
+                  <select
+                    className="form-control"
+                    value={pageSize}
+                    onChange={(e) => changePageData(e.target.value)}
+                  >
+                    <option value="100">100</option>
+                    <option value="150">150</option>
+                    <option value="200">200</option>
+                    <option value="250">250</option>
+                  </select>
+                </li>
+
+                <li className="page-item">
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    disabled={dataSource.length === 0}
+                    onClick={nextPage}
+                  >
+                    ▶
+                  </button>
+                </li>
+
+                <li className="ms-3">
+                  Current Page: {pageNumber}
+                </li>
+
+              </ul>
+            </div>
+
+            {/* Filters */}
+            <div className="RitFilterArea d-flex gap-2">
+
+              <select
+                className="form-select"
+                value={Leavestatustypevalue}
+                onChange={(e) => {
+                  FilteredDataBySelectedDropdownValue(
+                    e.target.value
+                  );
+                }}
+              >
+                <option value="">Select Status</option>
+                <option value="Applied">Applied</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+
+              <input
+                className="form-control"
+                placeholder="Type min 3 characters"
+                value={filterValue}
+                onChange={onEnterKeyPress}
+              />
+
+              <button
+                className="btn btn-primary"
+                onClick={() => applyFilter(filterValue)}
+              >
+                <i className="fa-solid fa-magnifying-glass"></i>
+              </button>
+
+              <button
+                className="btn btn-success"
+                onClick={expExcel}
+              >
+                <i className="fa-solid fa-file-excel"></i>
+              </button>
+
+            </div>
+          </div>
+
+          {/* Table */}
+
+          <div className="table-responsive">
+            <table className="table table-bordered table-hover">
+
+              <thead>
+                <tr>
+                  <th>Employee No.</th>
+                  <th>Employee Name</th>
+                  <th>Applied On</th>
+                  <th>Leave Type</th>
+                  <th>From Date</th>
+                  <th>To Date</th>
+                  <th>No. of Days</th>
+                  <th>Status</th>
+                  <th>Request Type</th>
+                  <th>Contact Number</th>
+                  <th>Reason</th>
+                  <th>Approver Remarks</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {dataSource.length > 0 ? (
+                  dataSource.map((element, index) => (
+                    <tr key={index}>
+
+                      <td>{element.employeeNo}</td>
+
+                      <td>{element.fullName}</td>
+
+                      <td>
+                        {new Date(
+                          element.createdOn
+                        ).toLocaleDateString()}
+                      </td>
+
+                      <td>{element.leaveName}</td>
+
+                      <td>
+                        {new Date(
+                          element.startDate
+                        ).toLocaleDateString()}
+                      </td>
+
+                      <td>
+                        {new Date(
+                          element.endDate
+                        ).toLocaleDateString()}
+                      </td>
+
+                      <td className="text-center">
+                        {element.noOfDays}
+                      </td>
+
+                      <td>{element.statusValue}</td>
+
+                      <td>{element.requestType}</td>
+
+                      <td>{element.contactNumber}</td>
+
+                      {/* Reason */}
+
+                      <td>
+                        {element.employeeRemarks?.length <=
+                        maxLength ? (
+                          element.employeeRemarks
+                        ) : (
+                          <>
+                            {element.showReason
+                              ? element.employeeRemarks
+                              : `${element.employeeRemarks.slice(
+                                  0,
+                                  maxLength
+                                )}...`}
+
+                            <button
+                              className="btn btn-link p-0 ms-1"
+                              onClick={() =>
+                                toggleShowReason(element)
+                              }
+                            >
+                              <i
+                                className={
+                                  element.showReason
+                                    ? "fa-regular fa-circle-caret-up"
+                                    : "fa-regular fa-circle-caret-down"
+                                }
+                              ></i>
+                            </button>
+                          </>
+                        )}
+                      </td>
+
+                      {/* Approver Remarks */}
+
+                      <td>
+                        {element.status === 1 ||
+                        (element.status === 5 &&
+                          element.requestType !==
+                            "Leave Application") ? (
+                          <textarea
+                            rows="1"
+                            className="form-control"
+                            value={
+                              element.approvalRemarks || ""
+                            }
+                            maxLength={250}
+                            onChange={(e) =>
+                              textAreaEmpty(
+                                element,
+                                e.target.value
+                              )
+                            }
+                          />
+                        ) : (
+                          <>
+                            {element.approvalRemarks
+                              ?.length <= maxLength
+                              ? element.approvalRemarks
+                              : (
+                                  <>
+                                    {element.showApproverRemarks
+                                      ? element.approvalRemarks
+                                      : `${element.approvalRemarks.slice(
+                                          0,
+                                          maxLength
+                                        )}...`}
+
+                                    <button
+                                      className="btn btn-link p-0 ms-1"
+                                      onClick={() =>
+                                        toggleShowApproverRemarks(
+                                          element
+                                        )
+                                      }
+                                    >
+                                      <i
+                                        className={
+                                          element.showApproverRemarks
+                                            ? "fa-regular fa-circle-caret-up"
+                                            : "fa-regular fa-circle-caret-down"
+                                        }
+                                      ></i>
+                                    </button>
+                                  </>
+                                )}
+                          </>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+
+                      <td>
+
+                        <button
+                          className="btn btn-success btn-sm me-2"
+                          disabled={
+                            !(
+                              element.status === 1 &&
+                              element.activebutton
+                            )
+                          }
+                          onClick={() =>
+                            UpdateLeaveStatus(
+                              element,
+                              "Approve"
+                            )
+                          }
+                        >
+                          <i className="fa-solid fa-circle-check"></i>
+                        </button>
+
+                        <button
+                          className="btn btn-danger btn-sm"
+                          disabled={
+                            !(
+                              element.status === 1 &&
+                              element.activebutton &&
+                              (element.requestType ===
+                                "Leave Application" ||
+                                element.requestType ===
+                                  "OH Application" ||
+                                element.requestType ===
+                                  "OH Cancel Application")
+                            )
+                          }
+                          onClick={() =>
+                            UpdateLeaveStatus(
+                              element,
+                              "Reject"
+                            )
+                          }
+                        >
+                          <i className="fa-solid fa-circle-xmark"></i>
+                        </button>
+
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="13"
+                      className="text-center"
+                    >
+                      No data found...
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {isLoadingResults && (
+        <div className="loading-shade text-center">
+          <div
+            className="spinner-border text-primary"
+            role="status"
+          >
+            <span className="visually-hidden">
+              Loading...
+            </span>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default MyTeamLeave;
+

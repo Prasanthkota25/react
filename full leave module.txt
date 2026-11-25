@@ -1,0 +1,2754 @@
+This is a complete Leave Management React component (ApplyLeave.jsx). It handles:
+
+Leave Application
+Leave Cancellation
+Leave Balance Calculation
+Leave Validation Rules
+LOP (Loss of Pay) Rules
+Maternity, Adoption, Paternity Leave Rules
+CC User Search
+Leave History
+Sorting
+Pagination
+Snackbar Notifications
+
+I'll explain it section by section.
+
+1. Imports
+import dayjs from "dayjs";
+import { useState, useEffect, useCallback } from 'react';
+
+
+Used for:
+
+Date calculations
+React state management
+Lifecycle methods
+
+Other imports:
+
+DatePicker
+Snackbar
+Alert
+Select
+
+
+Used for:
+
+Date selection
+Popup messages
+Dropdowns
+2. Adoption Leave Days Calculation
+function calculateAdoptionLeaveDays(from, to, holidays)
+
+
+Purpose:
+
+Calculate leave days for Adoption Leave.
+
+Logic:
+
+✅ Weekdays are counted
+
+✅ Holidays are also counted
+
+❌ Weekends are not counted
+
+Example:
+
+01-Jun Monday
+02-Jun Tuesday
+03-Jun Holiday
+04-Jun Thursday
+05-Jun Friday
+
+Total = 5 days
+
+3. Normal Leave Days Calculation
+function calculateDays(from,to,session,holidays)
+
+
+Used for:
+
+Casual Leave
+Sick Leave
+Bereavement Leave
+Paternity Leave
+
+Logic:
+
+if weekend
+   skip
+
+if holiday
+   skip
+
+count working days
+
+
+Example:
+
+Monday-Friday
+
+= 5 days
+
+
+If:
+
+session = FIRST_HALF
+
+
+or
+
+session = SECOND_HALF
+
+
+then:
+
+return 0.5
+
+4. LOP Logic
+function applyLOPPolicy()
+
+
+This is the most important function.
+
+Rule 1
+
+Single Friday leave
+
+Friday only leave
+
+LOP = 2 days
+
+
+Example:
+
+Fri = leave
+Sat = weekend
+Sun = weekend
+
+System counts = 2
+
+Rule 2
+
+Weekly Leave Rule
+
+if leave >=4 days
+  add 2 days
+
+if leave 2-3 days
+  add 1 day
+
+
+Example:
+
+Mon Tue Wed Thu
+
+4 days leave
+
+LOP = 6
+
+Rule 3
+
+Sandwich Rule
+
+Fri = Leave
+Sat = Weekend
+Sun = Weekend
+Mon = Leave
+
+
+Sunday becomes leave.
+
+Fri + Sun + Mon
+
+Total = 3
+
+Rule 4
+
+16+ Days Rule
+
+if totalDays >=16
+
+
+then holidays are also counted.
+
+Example:
+
+20 day leave
+
+public holidays included
+
+5. FIFO Sorting Logic
+compareNewestFirst()
+
+
+Used for Leave History.
+
+Latest leave application appears first.
+
+Example:
+
+Leave #20
+Leave #19
+Leave #18
+
+
+Newest on top.
+
+6. States
+
+You have many React states.
+
+Sorting
+order
+orderBy
+
+
+Controls table sorting.
+
+Pagination
+currentPage
+pageSize
+
+
+Controls:
+
+10 records
+25 records
+50 records
+100 records
+
+Cancel Leave
+isCancelMode
+cancelLeaveId
+
+
+Tracks leave cancellation.
+
+Snackbar
+snackbar
+
+
+Shows:
+
+Success
+Warning
+Error
+
+
+messages.
+
+CC Section
+ccSearch
+ccSuggestions
+selectedCC
+
+
+Used to search additional employees to CC.
+
+Leave Data
+leaveType
+history
+days
+
+
+Stores:
+
+selected leave type
+leave history
+calculated leave days
+Form
+form
+
+
+Contains:
+
+fromDate
+toDate
+address
+reason
+session
+phone
+
+User
+user
+
+
+Contains:
+
+username
+manager
+phone
+gender
+
+
+Fetched from backend.
+
+7. Load User Information
+useEffect(() => {
+   fetchData();
+}, []);
+
+
+Calls:
+
+/users/username/{username}
+
+/leave/my/{username}
+
+
+Gets:
+
+user details
+leave history
+8. Leave History Transformation
+
+Backend may return:
+
+APPROVED
+REJECTED
+CANCELLED
+CANCEL_REQUESTED
+
+
+You convert them into UI rows.
+
+Example:
+
+CANCEL_REQUESTED
+
+Creates 2 rows
+
+Leave Request  -> Cancelled
+
+Cancel Request -> Applied
+
+CANCELLED
+
+Creates 2 rows
+
+Leave Request -> Cancelled
+
+Cancel Request -> Approved
+
+
+This makes the history more understandable.
+
+9. Working Days Calculation
+getWorkingDaysCount()
+
+
+Counts:
+
+✅ Weekdays
+
+❌ Weekends
+
+❌ Holidays
+
+Example:
+
+Mon Tue Wed
+
+= 3
+
+10. Leave Balance Calculation
+getUsedLeaves()
+
+
+Calculates already used leaves.
+
+Then:
+
+getLeaveBalance()
+
+
+calculates:
+
+Opening Balance
+-
+Used Leaves
+=
+Current Balance
+
+Adoption Balance
+
+Male:
+
+5 Days
+
+
+Female:
+
+84 Days
+
+11. Auto Days Calculation
+
+Whenever:
+
+fromDate
+toDate
+session
+leaveType
+
+
+changes:
+
+useEffect()
+
+
+recalculates leave days.
+
+Example:
+
+01-Jun
+05-Jun
+
+= 5 days
+
+
+Automatically updates UI.
+
+12. Leave Rules
+Paternity Leave
+No Half Day
+Max within 90 days of childbirth
+
+Adoption Leave
+
+Male:
+
+Max 5 working days
+
+
+Female:
+
+Max 84 days
+
+Bereavement Leave
+Max 3 days
+
+Sick Leave
+More than 3 days
+
+Medical certificate needed
+
+Maternity Leave
+
+Rules:
+
+Max 182 days
+
+
+If:
+
+2+ children
+
+
+Then:
+
+Max 84 days
+
+
+Also:
+
+Minimum 80 days service
+
+
+Required.
+
+13. Duplicate Leave Check
+isDuplicate
+
+
+Prevents:
+
+Same leave type
+Same date range
+
+
+from being applied twice.
+
+Half Day Exception
+
+Allowed:
+
+Morning Half
++
+Afternoon Half
+
+
+Same date.
+
+14. Overlap Validation
+isOverlap
+
+
+Checks:
+
+Existing Leave
+New Leave
+
+
+Overlap.
+
+Example:
+
+Existing:
+
+10-Jun to 15-Jun
+
+
+New:
+
+12-Jun to 18-Jun
+
+
+Rejected.
+
+15. Submit Leave
+API.post('/leave/apply')
+
+
+Sends:
+
+{
+ username,
+ leaveType,
+ fromDate,
+ toDate,
+ reason,
+ address,
+ dayType,
+ days,
+ ccUsers
+}
+
+
+to backend.
+
+16. Cancel Leave
+handleCancel()
+
+
+Loads selected leave into the form.
+
+When confirmed:
+
+API.put('/leave/request-cancel/{id}')
+
+
+Backend creates cancellation request.
+
+17. CC Search
+
+Search endpoint:
+
+/users/search?keyword=
+
+
+User types:
+
+pra
+
+
+System fetches matching employees.
+
+Selected people are added as:
+
+CC Recipients
+
+18. Table Sorting
+handleRequestSort()
+
+
+Supports sorting by:
+
+Leave Type
+From Date
+To Date
+Status
+Request Type
+Days
+Reason
+
+
+Ascending and Descending.
+
+19. Pagination
+10
+25
+50
+100
+
+
+records per page.
+
+Controlled using:
+
+currentPage
+pageSize
+
+20. Snackbar Messages
+
+Examples:
+
+Leave Applied Successfully
+
+Insufficient Balance
+
+Leave Cancelled
+
+Please Fill Required Fields
+
+
+All messages are displayed using:
+
+Snackbar + Alert
+
+Overall Flow
+User Opens Page
+      ↓
+Load User + History
+      ↓
+Select Leave Type
+      ↓
+Choose Dates
+      ↓
+System Calculates Days
+      ↓
+Validates Rules
+      ↓
+Checks Balance
+      ↓
+Checks Duplicate
+      ↓
+Checks Overlap
+      ↓
+Submit Confirmation
+      ↓
+API /leave/apply
+      ↓
+History Refresh
+      ↓
+Leave Shown In Table
+
+In Short
+
+This component is a full Leave Management System UI that:
+
+Fetches employee data
+Calculates leave days automatically
+Applies business rules (LOP, Maternity, Paternity, Adoption, Bereavement)
+Validates overlaps and balances
+Allows leave cancellation
+Maintains leave history
+Supports sorting and pagination
+Sends leave requests to the Spring Boot backend through APIs.
+
+
+
+
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+You can explain it like this in a simple way:
+
+1. Leave Days Calculation
+Calculates leave days excluding weekends and holidays.
+Supports full day and half day leave.
+2. Adoption Leave Calculation
+Calculates adoption leave days.
+Counts holidays if applicable.
+3. LOP (Loss of Pay) Rules
+Applies special company rules.
+Friday rule, weekly rule, sandwich rule, and 16+ days rule are implemented.
+4. User Data Loading
+Fetches employee details from backend.
+Fetches leave history of logged-in user.
+5. Leave Balance
+Calculates available leave balance.
+Deducts already used leaves.
+6. Leave Validation
+Checks required fields.
+Validates leave balance.
+Prevents invalid leave applications.
+7. Duplicate Check
+Prevents applying the same leave multiple times.
+8. Overlap Check
+Prevents applying leave for dates already covered by another leave request.
+9. Paternity Leave Rules
+Cannot apply half-day.
+Must be taken within 90 days of child birth.
+10. Maternity Leave Rules
+Maximum 182 days.
+Checks service period and other eligibility rules.
+11. Adoption Leave Rules
+Male employees: Maximum 5 days.
+Female employees: Maximum 84 days.
+12. Bereavement Leave Rules
+Maximum 3 days allowed.
+13. Sick Leave Rules
+More than 3 days requires medical certificate.
+14. Apply Leave
+Shows confirmation popup.
+Sends leave request to backend API.
+15. Cancel Leave
+Allows employee to request leave cancellation.
+Sends cancellation request to backend.
+16. CC Users
+Search employees.
+Add employees in CC for leave notification.
+17. Auto Days Calculation
+Automatically recalculates leave days when dates or leave type change.
+18. Leave History
+Displays all leave requests and cancellation requests.
+Shows status and approver remarks.
+19. Sorting
+Allows sorting by:
+Leave Type
+Date
+Status
+Days
+Request Type
+20. Pagination
+Shows records page by page.
+Options: 10, 25, 50, 100 records.
+21. Snackbar Messages
+Displays success, warning, and error messages to users.
+Overall Flow
+User Login
+     ↓
+Load User & Leave History
+     ↓
+Select Leave Type
+     ↓
+Choose Dates
+     ↓
+Calculate Leave Days
+     ↓
+Validate Rules
+     ↓
+Check Balance & Overlap
+     ↓
+Submit Leave
+     ↓
+Send API Request
+     ↓
+Update Leave History
+
+
+In one line:
+ This component is a complete Leave Management System that handles leave application, cancellation, balance calculation, validations, approvals tracking, history management, sorting, pagination, and employee notifications.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+This LeaveBalance.jsx component is used to show the employee's leave balance summary and leave history. Let me explain it section by section in a simple way.
+
+1. Imports
+import { useState, useEffect } from 'react';
+import Layout from '../../components/Layout';
+import API from '../../api/api';
+import '../../styles/leave.css';
+import { useLeaveConfig } from '../../hooks/useLeaveConfig';
+
+Purpose
+useState → Store data in component.
+useEffect → Run code when page loads.
+Layout → Common page layout.
+API → Axios instance for backend calls.
+leave.css → Styling.
+useLeaveConfig() → Gets leave types and leave balances.
+2. State Variables
+const [year, setYear] = useState(String(new Date().getFullYear()));
+const [history, setHistory] = useState([]);
+const [selectedType, setSelectedType] = useState(null);
+const [showModal, setShowModal] = useState(false);
+
+Purpose
+year
+
+Stores selected year.
+
+2026
+
+history
+
+Stores employee leave records.
+
+[
+  {
+    leaveType:"Casual Leave",
+    status:"APPROVED"
+  }
+]
+
+selectedType
+
+Stores clicked leave type.
+
+"Casual Leave"
+
+showModal
+
+Controls popup visibility.
+
+true
+
+
+means open modal.
+
+3. Leave Configuration
+const { leaveTypes, balances } = useLeaveConfig();
+
+
+Gets data from custom hook.
+
+Example:
+
+leaveTypes = [
+ {name:"Casual Leave"},
+ {name:"Sick Leave"}
+]
+
+balances = {
+ "Casual Leave":12,
+ "Sick Leave":6
+}
+
+4. User State
+const [user, setUser] = useState({
+  username: '',
+  employeeId: ''
+});
+
+
+Stores logged-in employee details.
+
+Example:
+
+{
+  id:7,
+  username:"prasanth",
+  gender:"MALE"
+}
+
+5. Loading User Data
+useEffect(() => {
+
+
+Runs when page opens.
+
+Get username
+const username = localStorage.getItem('username');
+
+
+Example:
+
+prasanth
+
+Fetch Leave History
+const histRes = await API.get(`/leave/my/${username}`);
+
+
+Backend API:
+
+GET /leave/my/prasanth
+
+
+Response:
+
+[
+ {
+   "leaveType":"Casual Leave",
+   "days":2,
+   "status":"APPROVED"
+ }
+]
+
+
+Saved into:
+
+setHistory(histRes.data);
+
+Fetch User Details
+const userRes = await API.get(`/users/username/${username}`);
+
+
+Response:
+
+{
+ "id":7,
+ "gender":"MALE"
+}
+
+
+Saved into:
+
+setUser(userRes.data);
+
+6. getStats()
+
+This is the most important function.
+
+const getStats = (leaveType) => {
+
+
+Calculates:
+
+Opening Balance
+Earned
+Applied
+Approved
+Cancelled
+Available Balance
+
+for each leave type.
+
+7. Check Selected Year
+if (Number(year) !== currentYear)
+
+
+If user selects past year:
+
+2025
+
+
+it returns:
+
+{
+ opening:12,
+ earned:0,
+ applied:0,
+ approved:0,
+ cancelled:0,
+ available:0
+}
+
+8. Filter Leave Records
+const filtered = history.filter(...)
+
+
+Example:
+
+Current history:
+
+[
+ {
+  leaveType:"Casual Leave",
+  days:2
+ },
+ {
+  leaveType:"Sick Leave",
+  days:1
+ }
+]
+
+
+If selected type:
+
+"Casual Leave"
+
+
+Result:
+
+[
+ {
+  leaveType:"Casual Leave",
+  days:2
+ }
+]
+
+9. Approved Days
+const approved = filtered
+.filter(l => l.status === 'APPROVED')
+.reduce(...)
+
+
+Example:
+
+Approved:
+2 + 3 = 5
+
+
+Result:
+
+approved = 5
+
+10. Applied Days
+const applied = filtered
+.filter(l => ['PENDING','APPROVED','APPLIED'])
+
+
+Counts all currently requested leaves.
+
+Example:
+
+2 Approved
+1 Pending
+
+
+Result:
+
+applied = 3
+
+11. Cancelled Days
+const cancelled = filtered
+.filter(l => l.status === 'CANCELLED')
+
+
+Example:
+
+2 days cancelled
+
+
+Result:
+
+cancelled = 2
+
+12. Adoption Leave Special Logic
+if (leaveType === 'Adoption Leave')
+
+Male
+opening = 5;
+
+Female
+opening = 84;
+
+Others
+opening = 0;
+
+13. Other Leave Types
+opening = balances?.[leaveType] ?? 0;
+
+
+Example:
+
+balances = {
+ "Casual Leave":12
+}
+
+
+Result:
+
+opening = 12
+
+14. Used Leaves
+const used = filtered
+.filter(...)
+.reduce(...)
+
+
+Counts:
+
+APPROVED
+PENDING
+APPLIED
+
+
+Example:
+
+Approved = 2
+Pending = 1
+
+
+Result:
+
+used = 3
+
+15. Available Balance
+available =
+ Math.max(0, opening - used);
+
+
+Example:
+
+opening = 12
+used = 3
+
+
+Result:
+
+available = 9
+
+16. Special LOP Logic
+leaveType === 'LOP'
+
+
+Returns:
+
+365
+
+
+Because Loss Of Pay is treated differently.
+
+17. Modal Leave History
+
+When user clicks:
+
+Casual Leave
+
+
+this runs:
+
+setSelectedType(type);
+setShowModal(true);
+
+
+Popup opens.
+
+18. filteredHistory
+const filteredHistory = history.filter(...)
+
+
+Shows only selected leave type.
+
+Example:
+
+Selected:
+Casual Leave
+
+
+Modal shows only Casual Leave records.
+
+19. formatDate()
+
+Converts:
+
+2026-08-27
+
+
+into:
+
+27-Aug-26
+
+20. Gender Based Visibility
+const filteredLeaveTypes = leaveTypes.filter(...)
+
+Male User
+
+Shows:
+
+Paternity Leave
+
+
+Hides:
+
+Maternity Leave
+
+Female User
+
+Shows:
+
+Maternity Leave
+
+
+Hides:
+
+Paternity Leave
+
+21. Leave Balance Table
+
+Displays:
+
+------------------------------------------------
+Leave Type | Opening | Earned | Applied | Balance
+------------------------------------------------
+Casual     | 12      | 12     | 2       | 10
+Sick       | 6       | 6      | 1       | 5
+------------------------------------------------
+
+22. Modal Details
+
+When clicked:
+
+Casual Leave
+
+
+Modal displays:
+
+Employee Number : 7
+Employee Name   : Prasanth
+
+
+and leave history:
+
+---------------------------------------------------------
+Type     From     To      Days   Status
+---------------------------------------------------------
+Casual   01-Aug   02-Aug  2      Approved
+---------------------------------------------------------
+
+Overall Flow
+Page Loads
+    ↓
+Get Username from localStorage
+    ↓
+Fetch User Details
+    ↓
+Fetch Leave History
+    ↓
+Calculate Leave Statistics
+    ↓
+Show Leave Balance Table
+    ↓
+User Clicks Leave Type
+    ↓
+Open Modal
+    ↓
+Show Detailed Leave History
+
+
+In short, this component fetches the logged-in employee's leave records, calculates leave balances dynamically, filters leave types based on gender, and shows detailed leave history in a popup when a leave type is clicked.
+
+
+
+
+
+
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+You can explain it like this:
+
+This component displays the employee's leave balance summary and leave history. When the page loads, it fetches the logged-in user's details and leave records from the backend. It calculates the opening balance, applied, approved, cancelled, and available leaves for each leave type, then displays them in a table. When a user clicks on a leave type, a popup opens showing the detailed leave history for that leave type. It also applies gender-based rules, such as showing Maternity Leave only for females and Paternity Leave only for males, and handles special leave calculations like Adoption Leave and LOP.
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+This component is a Manager Leave Management screen (MyTeamLeave.jsx). It allows a manager to:
+
+View team members' leave requests.
+View cancellation requests.
+Approve or reject leave requests.
+Approve or reject cancellation requests.
+Search, filter, sort, paginate records.
+Export data to Excel.
+Add approver remarks.
+1. Imports
+import { Snackbar, Alert, Button } from '@mui/material';
+import * as XLSX from "xlsx";
+import TableSortLabel from '@mui/material/TableSortLabel';
+import { useState, useEffect } from 'react';
+import Layout from '../../components/Layout';
+import API from '../../api/api';
+import { formatName } from '../../utils/formatters';
+
+Purpose
+Snackbar → Popup messages.
+Alert → Success/Error/Warning messages.
+Button → Buttons inside Snackbar.
+XLSX → Excel export.
+TableSortLabel → Table sorting arrows.
+useState → State management.
+useEffect → Lifecycle API calls.
+Layout → Page layout.
+API → Axios API instance.
+formatName() → Format username properly.
+2. buildManagerHistory()
+
+This is the most important function.
+
+const buildManagerHistory = (data) => {
+
+
+It converts backend leave data into display records.
+
+Example 1
+
+Backend:
+
+{
+  "id": 1,
+  "status": "APPROVED"
+}
+
+
+Output:
+
+{
+  "requestType": "LEAVE",
+  "displayStatus": "Approved"
+}
+
+Example 2
+
+Backend:
+
+{
+  "id": 1,
+  "status": "CANCEL_REQUESTED"
+}
+
+
+Output:
+
+[
+  {
+    "requestType": "CANCEL",
+    "displayStatus": "Applied"
+  },
+  {
+    "requestType": "LEAVE",
+    "displayStatus": "Cancelled"
+  }
+]
+
+
+This creates two rows.
+
+Row 1
+Cancel Application
+Status = Applied
+
+
+Manager can approve/reject cancellation.
+
+Row 2
+Leave Application
+Status = Cancelled
+
+
+Shows original leave is cancelled.
+
+Example 3
+
+Backend:
+
+{
+  "status": "CANCELLED"
+}
+
+
+Output:
+
+[
+  {
+    requestType: "CANCEL",
+    displayStatus: "Approved"
+  },
+  {
+    requestType: "LEAVE",
+    displayStatus: "Cancelled"
+  }
+]
+
+
+Meaning:
+
+Cancellation Request -> Approved
+Leave -> Cancelled
+
+3. States
+const [leaves, setLeaves] = useState([]);
+
+
+All leave records.
+
+const [filtered, setFiltered] = useState([]);
+
+
+Filtered data shown in grid.
+
+const [statusFilter, setStatusFilter] = useState('');
+
+
+Status dropdown.
+
+Example:
+
+Applied
+Approved
+Rejected
+Cancelled
+
+const [search, setSearch] = useState('');
+
+
+Search value used for filtering.
+
+const [searchInput, setSearchInput] = useState('');
+
+
+Actual text typed in search box.
+
+const [isManager, setIsManager] = useState(false);
+
+
+Checks if logged user is manager.
+
+const [managerId, setManagerId] = useState(null);
+
+
+Stores manager user ID.
+
+const [remarksMap, setRemarksMap] = useState({});
+
+
+Stores remarks.
+
+Example:
+
+{
+  5:"Approved",
+  6:"Need more details"
+}
+
+const [order, setOrder] = useState('desc');
+const [orderBy, setOrderBy] = useState('');
+
+
+Table sorting state.
+
+const [currentPage, setCurrentPage] = useState(1);
+const [pageSize, setPageSize] = useState(10);
+
+
+Pagination.
+
+4. Load Data
+useEffect(() => {
+
+
+Runs when page loads.
+
+Get Username
+const username = localStorage.getItem('username');
+
+
+Reads logged-in username.
+
+Get User
+const userResponse =
+ await API.get(`/users/username/${username}`);
+
+
+Fetches user details.
+
+Example:
+
+{
+  "id": 10,
+  "role": "MANAGER"
+}
+
+Check Manager
+if (user.role === "MANAGER")
+
+
+Only managers can view team leaves.
+
+Fetch Team Leaves
+const leaveResponse =
+ await API.get('/leave/team',{
+  headers:{
+   managerId:user.id
+  }
+});
+
+
+Gets team leave requests.
+
+Format Data
+const formattedData =
+ buildManagerHistory(
+   leaveResponse.data || []
+ );
+
+
+Converts backend response into display rows.
+
+Store Data
+setLeaves(formattedData);
+setFiltered(formattedData);
+
+5. Filtering Logic
+
+Second useEffect.
+
+useEffect(() => {
+
+
+Whenever:
+
+statusFilter
+search
+leaves
+order
+orderBy
+
+
+changes, data is re-filtered.
+
+Status Filter
+if(statusFilter==="PENDING")
+
+
+Shows:
+
+Applied
+
+
+records.
+
+APPROVED
+
+
+Shows:
+
+Approved
+
+
+rows.
+
+REJECTED
+
+
+Shows:
+
+Rejected
+
+
+rows.
+
+CANCELLED
+
+
+Shows:
+
+Cancelled
+
+
+rows.
+
+6. Search
+if(search.trim().length >=3)
+
+
+Minimum 3 characters required.
+
+Searches:
+
+userId
+username
+leaveType
+reason
+
+
+Example:
+
+sick
+
+
+returns all sick leave records.
+
+7. Default Sorting
+if(!orderBy)
+
+
+Sorts by:
+
+appliedOn
+
+
+latest first.
+
+Special Logic
+if (
+ a.requestType==="CANCEL"
+ &&
+ b.requestType==="LEAVE"
+)
+
+
+Cancellation request appears before leave request.
+
+Example:
+
+Cancel Application
+Leave Application
+
+8. Pagination
+const totalPages =
+ Math.ceil(filtered.length / pageSize);
+
+
+Calculates pages.
+
+const paginatedData =
+ filtered.slice(...)
+
+
+Shows only current page records.
+
+9. Approve Leave
+handleApprove(id)
+
+
+Checks remarks.
+
+if(!remarks)
+
+
+Shows error if empty.
+
+Calls API.
+
+API.put(
+ `/leave/approve/${id}`,
+ {remarks}
+)
+
+
+Updates state.
+
+status="APPROVED"
+displayStatus="Approved"
+
+
+Snackbar:
+
+Leave approved successfully
+
+10. Reject Leave
+handleReject(id)
+
+
+Calls:
+
+API.put(
+ `/leave/reject/${id}`,
+ {remarks}
+)
+
+
+Updates:
+
+displayStatus="Rejected"
+
+
+Shows:
+
+Leave rejected successfully
+
+11. Cancel Request Decision
+handleCancelDecision(id,action)
+
+
+Action can be:
+
+APPROVE
+REJECT
+
+
+API:
+
+PUT
+/leave/cancel-decision/{id}/{action}
+
+
+Examples:
+
+/leave/cancel-decision/5/APPROVE
+
+
+or
+
+/leave/cancel-decision/5/REJECT
+
+
+Then refreshes leave list:
+
+API.get('/leave/team')
+
+12. Excel Download
+handleDownloadExcel()
+
+
+Exports current page data.
+
+Creates:
+
+const worksheet =
+ XLSX.utils.json_to_sheet(...)
+
+
+Creates workbook.
+
+XLSX.writeFile(...)
+
+
+Downloads:
+
+Leave_123456.xlsx
+
+13. Sorting
+handleRequestSort(property)
+
+
+Supports sorting by:
+
+Employee No
+Employee Name
+Applied On
+Leave Type
+From Date
+To Date
+Days
+Status
+Request Type
+Phone
+Reason
+Approver Remarks
+
+
+Example:
+
+handleRequestSort("employee")
+
+
+Sorts employee names.
+
+14. Remarks Logic
+getApproverRemarks(item)
+
+
+Rules:
+
+Applied
+No remarks shown
+
+Leave Cancelled
+No remarks shown
+
+Approved/Rejected
+Show approver remarks
+
+15. Action Buttons
+const isActionable =
+ item.displayStatus === "Applied";
+
+
+Only Applied requests can be processed.
+
+Approve Button
+✓
+
+
+For Leave:
+
+handleApprove()
+
+
+For Cancellation:
+
+handleCancelDecision(...,"APPROVE")
+
+Reject Button
+✗
+
+
+For Leave:
+
+handleReject()
+
+
+For Cancellation:
+
+handleCancelDecision(...,"REJECT")
+
+16. Snackbar Messages
+showSnackbar()
+
+
+Used for:
+
+Success
+Error
+Warning
+Confirmation
+
+
+Examples:
+
+Leave approved successfully
+Leave rejected successfully
+Are you sure?
+Please enter remarks
+
+Overall Flow
+Manager Login
+      ↓
+Fetch User
+      ↓
+Check Role = MANAGER
+      ↓
+Fetch Team Leaves
+      ↓
+buildManagerHistory()
+      ↓
+Show Table
+      ↓
+Search / Filter / Sort
+      ↓
+Approve / Reject Leave
+      ↓
+Approve / Reject Cancellation
+      ↓
+Refresh Data
+      ↓
+Export Excel
+
+
+In short, this component is a complete Manager Team Leave Management module that handles leave applications, leave cancellation requests, approvals, rejections, remarks, filtering, sorting, pagination, notifications, and Excel export in a single screen.
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+
+MyTeamLeave Component - Short Explanation
+
+This page is used by a Manager to manage team leave requests.
+
+Main Flow
+Gets the logged-in user's username from localStorage.
+Fetches user details from the backend.
+Checks whether the user is a MANAGER.
+Fetches all team leave requests.
+Converts leave and cancellation requests into display records using buildManagerHistory().
+Displays them in a table.
+Features
+
+✅ View team leave requests
+ ✅ View leave cancellation requests
+ ✅ Approve leave requests
+ ✅ Reject leave requests
+ ✅ Approve cancellation requests
+ ✅ Reject cancellation requests
+ ✅ Add approver remarks
+ ✅ Search (minimum 3 characters)
+ ✅ Filter by status (Applied, Approved, Rejected, Cancelled)
+ ✅ Sort all columns
+ ✅ Pagination (10, 25, 50, 100 records)
+ ✅ Export data to Excel
+ ✅ Snackbar notifications for success/error messages
+
+Special Logic
+APPROVED → Shows one row (Approved Leave).
+REJECTED → Shows one row (Rejected Leave).
+CANCEL_REQUESTED → Shows two rows:
+Cancel Application → Applied
+Leave Application → Cancelled
+CANCELLED → Shows two rows:
+Cancel Application → Approved
+Leave Application → Cancelled
+Action Buttons
+
+✓ Approve
+
+Leave → Approves leave.
+Cancel Request → Approves cancellation.
+
+✗ Reject
+
+Leave → Rejects leave.
+Cancel Request → Rejects cancellation.
+States Used
+leaves → All leave data.
+filtered → Filtered data shown in table.
+remarksMap → Manager remarks.
+statusFilter → Status dropdown.
+search → Search value.
+currentPage → Current page.
+pageSize → Records per page.
+order/orderBy → Sorting.
+
+In simple words: This component is a complete Manager Leave Approval Dashboard that lets managers view, search, sort, filter, approve/reject leaves and cancellation requests, add remarks, and export data to Excel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+chat-bot old code 
+
+
+
+
+
+
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import API from '../api/api';
+import { useLeaveConfig } from '../hooks/useLeaveConfig';
+
+
+import { FaMicrophone, FaStop, FaVolumeMute } from "react-icons/fa";
+
+const MIN_MENU_QUERY_LENGTH = 3;
+
+const findMatchingMenu = (menuOptions, query) => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (normalizedQuery.length < MIN_MENU_QUERY_LENGTH || !menuOptions) {
+        return null;
+    }
+
+    let bestMatch = null;
+    let bestScore = 0;
+
+    Object.entries(menuOptions).forEach(([menuName, items = []]) => {
+        const menuLower = menuName.toLowerCase();
+        let score = 0;
+
+        if (menuLower === normalizedQuery) {
+            score = 100;
+        } else if (menuLower.startsWith(normalizedQuery)) {
+            score = 90;
+        } else if (
+            menuLower.split(/\s+/).some((word) => word.startsWith(normalizedQuery))
+        ) {
+            score = 80;
+        } else if (menuLower.includes(normalizedQuery)) {
+            score = 70;
+        } else if (normalizedQuery.includes(menuLower)) {
+            score = 75;
+        } else if (
+            menuLower.split(/\s+/).some(
+                (word) => word.length >= MIN_MENU_QUERY_LENGTH && normalizedQuery.includes(word)
+            )
+        ) {
+            score = 65;
+        } else if (
+            items.some((item) =>
+                item.label.toLowerCase().includes(normalizedQuery)
+            )
+        ) {
+            score = 60;
+        }
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestMatch = menuName;
+        }
+    });
+
+    return bestMatch;
+};
+
+function Chatbot({ chatOpen, setChatOpen, setSelectedMenu, menuOptions = {} }) {
+    const navigate = useNavigate();
+
+
+    
+    const [messages, setMessages] = useState([
+        {
+            role: "assistant",
+            content: "Hello! How can I help you today?"
+        }
+    ]);
+    const [userName, setUserName] = useState("");
+    const [leaveHistory, setLeaveHistory] = useState([]);
+    const [userDetails, setUserDetails] = useState(null);
+    const [input, setInput] = useState("");
+    const [isListening, setIsListening] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+
+    const inputRef = useRef(null);
+    const recognitionRef = useRef(null);
+    const isListeningRef = useRef(false);
+    const skipResultRef = useRef(false);
+    const utteranceRef = useRef(null);
+    const chatbotRef = useRef(null);
+    const messagesEndRef = useRef(null);
+useEffect(() => {
+    const handleClickOutside = (event) => {
+        if (
+            chatOpen &&
+            chatbotRef.current &&
+            !chatbotRef.current.contains(event.target)
+        ) {
+            stopSpeaking();
+            stopListening(true);
+
+            setChatOpen(false);
+            setInput("");
+            setSelectedMenu(null);
+            setIsListening(false);
+            setIsSpeaking(false);
+
+            setMessages([
+                {
+                    role: "assistant",
+                    content: "Hello! How can I help you today?"
+                }
+            ]);
+        }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+        document.removeEventListener(
+            "mousedown",
+            handleClickOutside
+        );
+    };
+}, [chatOpen, setChatOpen, setSelectedMenu]);
+useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+        behavior: "smooth"
+    });
+}, [messages]);
+
+    useEffect(() => {
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+            console.log("Speech Recognition not supported");
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+
+        recognition.lang = "en-US";
+        recognition.continuous = false;
+        recognition.interimResults = true;
+
+        recognition.onstart = () => {
+            isListeningRef.current = true;
+            setIsListening(true);
+        };
+
+        recognition.onresult = (event) => {
+            if (skipResultRef.current) return;
+
+            let interimText = "";
+            let finalText = "";
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+
+                if (event.results[i].isFinal) {
+                    finalText += transcript;
+                } else {
+                    interimText += transcript;
+                }
+            }
+
+            const speechText = (finalText || interimText).trim();
+
+            if (!speechText) return;
+
+            setInput(speechText);
+
+            if (finalText) {
+                setTimeout(() => {
+                    if (skipResultRef.current) return;
+
+                    inputRef.current?.focus();
+                    document.dispatchEvent(
+                        new KeyboardEvent("keydown", {
+                            key: "Enter"
+                        })
+                    );
+                }, 300);
+            }
+        };
+
+        recognition.onerror = (event) => {
+            // "aborted" / "no-speech" are normal when user stops the mic
+            if (event.error !== "aborted" && event.error !== "no-speech") {
+                console.log(event.error);
+            }
+            isListeningRef.current = false;
+            setIsListening(false);
+        };
+
+        recognition.onend = () => {
+            isListeningRef.current = false;
+            setIsListening(false);
+        };
+
+        recognitionRef.current = recognition;
+
+        return () => {
+            skipResultRef.current = true;
+            try {
+                recognition.abort();
+            } catch {
+                /* already stopped */
+            }
+            window.speechSynthesis.cancel();
+        };
+    }, []);
+
+    const userNameRef = useRef(userName);
+
+    const { leaveTypes, balances } = useLeaveConfig();
+
+    userNameRef.current = userName;
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const username = localStorage.getItem("username");
+
+                const res = await API.get(
+                    `/users/username/${username}`
+                );
+
+                setUserName(
+                    `${res.data.firstname} ${res.data.lastname}`
+                );
+
+                setUserDetails(res.data);
+                console.log("User Details:", res.data);
+
+                const leaveRes = await API.get(
+                    `/leave/my/${username}`
+                );
+
+                setLeaveHistory(leaveRes.data || []);
+
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
+        if (!chatOpen) {
+            window.speechSynthesis.cancel();
+            utteranceRef.current = null;
+            setIsSpeaking(false);
+            skipResultRef.current = true;
+            if (recognitionRef.current && isListeningRef.current) {
+                try {
+                    recognitionRef.current.abort();
+                } catch {
+                    /* already stopped */
+                }
+            }
+            isListeningRef.current = false;
+            setIsListening(false);
+            return;
+        }
+
+        setMessages([
+            {
+                role: "assistant",
+                content: `Hi ${userNameRef.current}, How can I help you today?`
+            }
+        ]);
+        setInput("");
+    }, [chatOpen]);
+
+    const stopSpeaking = () => {
+        // Chrome sometimes needs cancel + resume to fully cut audio
+        window.speechSynthesis.cancel();
+        try {
+            window.speechSynthesis.resume();   
+        } catch {
+            /* ignore */
+        }
+        utteranceRef.current = null;
+        setIsSpeaking(false);
+    };
+
+    const stopListening = (cancel = false) => {
+        if (!recognitionRef.current || !isListeningRef.current) return;
+
+        skipResultRef.current = cancel;
+
+        try {
+            if (cancel) {
+                recognitionRef.current.abort();
+            } else {
+                recognitionRef.current.stop();
+            }
+        } catch {
+            /* already stopped */
+        }
+
+        isListeningRef.current = false;
+        setIsListening(false);
+    };
+
+    const toggleListening = () => {
+        if (!recognitionRef.current) {
+            alert("Speech Recognition is not supported.");
+            return;
+        }
+
+        // Clicking the mic always mutes AI speech first (like a real assistant)
+        stopSpeaking();
+
+        if (isListeningRef.current) {
+            // Second tap: stop / cancel listening without auto-sending
+            stopListening(true);
+            return;
+        }
+
+        skipResultRef.current = false;
+
+        try {
+            recognitionRef.current.start();
+        } catch {
+            // Restart if the previous session did not release yet
+            try {
+                recognitionRef.current.abort();
+                setTimeout(() => {
+                    skipResultRef.current = false;
+                    try {
+                        recognitionRef.current?.start();
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }, 200);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    };
+
+    const getLeaveBalanceByType = (leaveTypeName) => {
+        if (!userDetails) return 0;
+
+        const filtered = leaveHistory.filter(
+            l => l.leaveType === leaveTypeName
+        );
+
+        const used = filtered
+            .filter(l =>
+                ["APPROVED", "PENDING", "APPLIED"]
+                    .includes(l.status)
+            )
+            .reduce(
+                (sum, l) => sum + Number(l.days || 0),
+                0
+            );
+
+        let opening;
+
+        if (leaveTypeName === "Adoption Leave") {
+            const gender =
+                (userDetails.gender || "")
+                    .toUpperCase();
+
+            opening =
+                gender === "MALE"
+                    ? 5
+                    : gender === "FEMALE"
+                        ? 84
+                        : 0;
+
+        } else {
+            opening =
+                balances?.[leaveTypeName] ?? 0;
+        }
+
+        return Math.max(0, opening - used);
+    };
+
+    const speak = (text) => {
+        if (!text) return;
+
+        stopSpeaking();
+
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.lang = "en-US";
+        speech.rate = 1;
+        speech.pitch = 1;
+
+        speech.onstart = () => {
+            setIsSpeaking(true);
+        };
+
+        speech.onend = () => {
+            utteranceRef.current = null;
+            setIsSpeaking(false);
+        };
+
+        speech.onerror = () => {
+            utteranceRef.current = null;
+            setIsSpeaking(false);
+        };
+
+        utteranceRef.current = speech;
+
+        // Small delay after cancel so the next utterance reliably starts
+        setTimeout(() => {
+            if (utteranceRef.current !== speech) return;
+            window.speechSynthesis.speak(speech);
+        }, 50);
+    };
+
+    const handleSendMessage = () => {
+        if (!input.trim()) return;
+
+        const userMessage = {
+            role: "user",
+            content: input
+        };
+
+        const text = input.toLowerCase().trim();
+
+        let botResponse = "";
+
+        if (
+            text.includes("casual") ||
+            text.includes("sick")
+        ) {
+            botResponse =
+                `Your Casual / Sick Leave balance is ${getLeaveBalanceByType("Casual / Sick Leave")} Days`;
+        }
+        else if (text.includes("paternity")) {
+            const gender =
+                (userDetails?.gender || "")
+                    .trim()
+                    .toUpperCase();
+
+            if (gender !== "MALE") {
+                botResponse =
+                    "Paternity Leave is not applicable for you.";
+            } else {
+                botResponse =
+                    `Your Paternity Leave balance is ${getLeaveBalanceByType("Paternity Leave")} Days`;
+            }
+        }
+        else if (text.includes("maternity")) {
+            const gender =
+                (userDetails?.gender || "")
+                    .trim()
+                    .toUpperCase();
+
+            if (gender !== "FEMALE") {
+                botResponse =
+                    "Maternity Leave is not applicable for you.";
+            } else {
+                botResponse =
+                    `Your Maternity Leave balance is ${getLeaveBalanceByType("Maternity Leave")} Days`;
+            }
+        }
+        else if (text.includes("bereavement")) {
+            botResponse =
+                `Your Bereavement Leave balance is ${getLeaveBalanceByType("Bereavement Leave")} Days`;
+        }
+        else if (text.includes("adoption")) {
+            botResponse =
+                `Your Adoption Leave balance is ${getLeaveBalanceByType("Adoption Leave")} Days`;
+        }
+        else if (text.includes("lop")) {
+            botResponse =
+                "LOP Balance : 365 Days";
+        }
+        else if (
+            text.includes("leave types") ||
+            text.includes("which leave can i apply") ||
+            text.includes("what leaves can i apply") ||
+            text.includes("what leave types do i have") ||
+            text.includes("eligible leaves") ||
+            text.includes("available leaves")
+        ) {
+            const gender =
+                (userDetails?.gender || "")
+                    .trim()
+                    .toUpperCase();
+
+            const eligibleLeaveTypes = leaveTypes.filter((leaveType) => {
+                const leaveName = (leaveType.name || "").toLowerCase();
+
+                // Show Maternity only for Female
+                if (leaveName.includes("maternity")) {
+                    return gender === "FEMALE";
+                }
+
+                // Show Paternity only for Male
+                if (leaveName.includes("paternity")) {
+                    return gender === "MALE";
+                }
+
+                return true;
+            });
+
+            botResponse =
+                "You are eligible for the following leave types:\n\n" +
+                eligibleLeaveTypes
+                    .map((leaveType) => `• ${leaveType.name}`)
+                    .join("\n");
+        }
+        else if (
+            text.includes("leave balance") ||
+            text.includes("leave balances") ||
+            text.includes("all leaves") ||
+            text.includes("show my leave balance")
+        ) {
+            let balanceText = "Your Leave Balances:\n\n";
+
+            const gender =
+                (userDetails?.gender || "")
+                    .trim()
+                    .toUpperCase();
+
+            const filteredLeaveTypes =
+                leaveTypes.filter((lt) => {
+                    const leaveName =
+                        (lt.name || "")
+                            .toLowerCase();
+
+                    if (leaveName.includes("maternity")) {
+                        return gender === "FEMALE";
+                    }
+
+                    if (leaveName.includes("paternity")) {
+                        return gender === "MALE";
+                    }
+
+                    return true;
+                });
+
+            filteredLeaveTypes.forEach(type => {
+                balanceText +=
+                    `${type.name} : ${getLeaveBalanceByType(type.name)} Days\n`;
+            });
+
+            botResponse = balanceText;
+        }
+        else if (
+            text.includes("hi") ||
+            text.includes("hello") ||
+            text.includes("hey") ||
+            text.includes("hlo")
+        ) {
+            botResponse =
+                `Hi ${userName}, How can I help you today?`;
+        }
+
+        else if (
+    text.includes("manager") &&
+    !text.includes("skip")
+) {
+    botResponse = userDetails
+        ? `Manager Name: ${userDetails.managerName || userDetails.manager || "N/A"}
+Manager ID: ${userDetails.managerId || "N/A"}
+Manager Email: ${userDetails.managerEmail || "N/A"}`
+        : "Manager details are not available.";
+}
+        else if (
+            text.includes("profile") ||
+            text.includes("account") ||
+            text.includes("employee details") ||
+            text.includes("my details") ||
+            text.includes("my information")
+        ) {
+            botResponse = {
+                type: "menu",
+                title: "Profile Options",
+                items: [
+                    {
+                        label: "My Profile",
+                        path: "/profile"
+                    }
+                ]
+            };
+
+            setSelectedMenu("Core HR");
+        }
+        else {
+            const matchedMenu = findMatchingMenu(menuOptions, text);
+
+            if (matchedMenu) {
+                botResponse = {
+                    type: "menu",
+                    title: matchedMenu,
+                    items: menuOptions[matchedMenu] || []
+                };
+
+                setSelectedMenu(matchedMenu);
+            } else {
+                botResponse =
+                    "Sorry, I don't have information about that.";
+            }
+        }
+
+        setMessages(prev => [
+            ...prev,
+            userMessage,
+            {
+                role: "assistant",
+                content: botResponse
+            }
+        ]);
+        if (typeof botResponse === "string") {
+
+            speak(botResponse);
+
+        }
+
+        setInput("");
+        inputRef.current?.focus();
+    };
+
+    const handleClose = () => {
+        stopSpeaking();
+        stopListening(true);
+        setChatOpen(false);
+        setInput("");
+        setSelectedMenu(null);
+        setIsListening(false);
+        setIsSpeaking(false);
+        setMessages([
+            {
+                role: "assistant",
+                content: "Hello! How can I help you today?"
+            }
+        ]);
+    };
+
+    return (
+        <div
+    ref={chatbotRef}
+    className={`chatbot-panel ${chatOpen ? "open" : ""}`}
+>
+            <style>{`
+                @keyframes chatbot-mic-pulse {
+                    0%, 100% { transform: scale(1); opacity: 1; }
+                    50% { transform: scale(1.08); opacity: 0.85; }
+                }
+                @keyframes chatbot-speak-pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.12); }
+                }
+            `}</style>
+            <div className="chatbot-header">
+
+
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <img
+                         src={`${process.env.PUBLIC_URL}/Logo-white.png`}
+                        alt="Bizx Logo"
+                        style={{
+                            width: "28px",
+                            height: "28px",
+                            objectFit: "contain"
+                        }}
+                    />
+
+                    <span>AI Assistant</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {isSpeaking && (
+                        <button
+                            type="button"
+                            className="chatbot-close"
+                            onClick={stopSpeaking}
+                            title="Mute AI speech"
+                            aria-label="Mute AI speech"
+                            style={{
+                                color: "#c62828",
+                                animation: "chatbot-speak-pulse 1s ease-in-out infinite"
+                            }}
+                        >
+                            <FaVolumeMute />
+                        </button>
+                    )}
+
+                    <button
+                        className="chatbot-close"
+                        onClick={handleClose}
+                    >
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            {/* <div className="chatbot-body">
+                {messages.map((msg, index) => (
+                    <div
+                        key={index}
+                        className={
+                            msg.role === "user"
+                                ? "user-message"
+                                : "bot-message"
+                        }
+                    >
+                        {typeof msg.content === "object" &&
+                            msg.content.type === "menu" ? (
+                            <>
+                                <div>{msg.content.title}</div>
+
+                                <div className="chatbot-links">
+                                    {msg.content.items.map((item, i) => (
+                                        <button
+                                            key={i}
+                                            className="chatbot-menu-link"
+                                            onClick={() => navigate(item.path)}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            msg.content
+                        )}
+                    </div>
+                ))}
+            </div> */}
+
+            <div className="chatbot-body">
+    {messages.map((msg, index) => (
+        <div
+            key={index}
+            className={
+                msg.role === "user"
+                    ? "user-message"
+                    : "bot-message"
+            }
+        >
+            {typeof msg.content === "object" &&
+            msg.content.type === "menu" ? (
+                <>
+                    <div>{msg.content.title}</div>
+
+                    <div className="chatbot-links">
+                        {msg.content.items.map((item, i) => (
+                            <button
+                                key={i}
+                                className="chatbot-menu-link"
+                                onClick={() => navigate(item.path)}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
+                </>
+            ) : (
+                msg.content
+            )}
+        </div>
+    ))}
+
+    {/* Auto-scroll target */}
+    <div ref={messagesEndRef} />
+</div>
+
+            <div className="chatbot-footer">
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    placeholder={
+                        isListening
+                            ? "Listening... tap stop to cancel"
+                            : isSpeaking
+                                ? "AI speaking... tap mute to stop"
+                                : "Type your message..."
+                    }
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            handleSendMessage();
+                        }
+                    }}
+                />
+
+                <button
+                    type="button"
+                    onClick={isSpeaking ? stopSpeaking : toggleListening}
+                    title={
+                        isSpeaking
+                            ? "Mute AI speech"
+                            : isListening
+                                ? "Stop listening"
+                                : "Start voice input"
+                    }
+                    aria-label={
+                        isSpeaking
+                            ? "Mute AI speech"
+                            : isListening
+                                ? "Stop listening"
+                                : "Start voice input"
+                    }
+                    aria-pressed={isListening || isSpeaking}
+                    style={
+                        isSpeaking
+                            ? {
+                                color: "#1565c0",
+                                background: "#e3f2fd",
+                                animation: "chatbot-speak-pulse 1s ease-in-out infinite"
+                            }
+                            : isListening
+                                ? {
+                                    color: "#c62828",
+                                    background: "#ffebee",
+                                    animation: "chatbot-mic-pulse 1.2s ease-in-out infinite"
+                                }
+                                : undefined
+                    }
+                >
+                    {isSpeaking ? (
+                        <FaVolumeMute />
+                    ) : isListening ? (
+                        <FaStop />
+                    ) : (
+                        <FaMicrophone />
+                    )}
+                </button>
+
+                <button
+                    type="button"
+                    onClick={handleSendMessage}
+                >
+                    Send
+                </button>
+            </div>
+        </div>
+    );
+}
+
+export default Chatbot;

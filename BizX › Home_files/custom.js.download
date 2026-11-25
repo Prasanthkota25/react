@@ -1,0 +1,106 @@
+function bindThemeOnLoad(siteURL) {
+    var linkHref = siteURL + "/dist/assets/css/";
+    if (localStorage.getItem("currentTheme")) {
+        linkHref = linkHref + localStorage.getItem("currentTheme") + ".css";
+    } else {
+        linkHref = linkHref + "StyleSheet.css";
+    }
+    document.getElementById("linkstylesheet").setAttribute("href", linkHref);
+    //hideDevTool(siteURL);
+}
+function bindSiteURLToRedirectFromChildSite() {
+    var pathname = location.pathname.split('/');
+    if (pathname.length > 0) {
+        pathname = pathname[1];
+    }
+    localStorage.setItem("siteURL", location.origin + '/' + pathname);
+    localStorage.setItem("redirectSiteURL", location.origin);
+}
+
+function hideInFirefox() {
+    let userAgentString = navigator.userAgent;
+    // Detect Firefox
+    let firefoxAgent = userAgentString.indexOf("Firefox") > -1;
+    if (firefoxAgent) {
+        confirm("Please Use Edge or Chrome for best view of BizX. Access using Firefox is temporarily disabled.")
+        location.reload();
+    }
+}
+
+function hideDevTool(siteURL) {
+
+}
+
+//function hideDevTool(siteURL) {
+
+//    let details = navigator.userAgent;
+
+//    let regexp = /android|iphone|kindle|ipad/i;
+
+//    let isMobileDevice = regexp.test(details);
+
+//    if (!isMobileDevice) {
+//        const devtools = {
+//            isOpen: false,
+//            orientation: undefined,
+//        };
+
+//        const threshold = 170;
+
+//        const emitEvent = (isOpen, orientation) => {
+//            globalThis.dispatchEvent(new globalThis.CustomEvent('devtoolschange', {
+//                detail: {
+//                    isOpen,
+//                    orientation,
+//                },
+//            }));
+//        };
+
+//        const main = ({ emitEvents = true } = {}) => {
+//            const widthThreshold = globalThis.outerWidth - globalThis.innerWidth > threshold;
+//            const heightThreshold = globalThis.outerHeight - globalThis.innerHeight > threshold;
+//            const orientation = widthThreshold ? 'vertical' : 'horizontal';
+
+//            if (
+//                !(heightThreshold && widthThreshold)
+//                && ((globalThis.Firebug && globalThis.Firebug.chrome && globalThis.Firebug.chrome.isInitialized) || widthThreshold || heightThreshold)
+//            ) {
+//                if ((!devtools.isOpen || devtools.orientation !== orientation) && emitEvents) {
+//                    emitEvent(true, orientation);
+//                }
+
+//                devtools.isOpen = true;
+//                devtools.orientation = orientation;
+//            } else {
+//                if (devtools.isOpen && emitEvents) {
+//                    emitEvent(false, undefined);
+//                }
+
+//                devtools.isOpen = false;
+//                devtools.orientation = undefined;
+//            }
+//        };
+
+//        main({ emitEvents: false });
+//        setInterval(main, 500);
+
+//        let redirectURL = siteURL + "/unauthorized";
+
+//        if (devtools.isOpen) {
+//            if (window.location.href != redirectURL) {
+//                window.location.href = redirectURL;
+//            }
+//        }
+
+//        // Get notified when it's opened/closed or orientation changes
+//        window.addEventListener('devtoolschange', event => {
+
+//            if (event.detail.isOpen) {
+//                if (window.location.href != redirectURL) {
+//                    window.location.href = redirectURL;
+//                }
+//            }
+//        });
+//    }
+
+//}

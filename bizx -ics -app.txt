@@ -1,0 +1,1246 @@
+package com.example.bizx.ics.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+
+		registry.addMapping("/**").allowedOrigins("http://localhost:3000")
+				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*").allowCredentials(true);
+	}
+}
+
+
+nd
+
+package com.example.bizx.ics.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.bizx.ics.LeaveEntity.LeaveRequest;
+import com.example.bizx.ics.dto.LeaveRequestDTO;
+import com.example.bizx.ics.service.LeaveService;
+
+@RestController
+@RequestMapping("/leave")
+//@CrossOrigin(origins = "http://localhost:3000")
+public class LeaveController {
+
+	@Autowired
+	private LeaveService service;
+
+	@PostMapping("/apply")
+	public String apply(@RequestBody LeaveRequestDTO dto) {
+		return service.applyLeave(dto);
+	}
+
+	@GetMapping("/my/{username}")
+	public List<LeaveRequest> myLeaves(@PathVariable String username) {
+		return service.getMyLeaves(username);
+	}
+
+	@GetMapping("/team/{managerId}")
+	public List<LeaveRequest> teamLeaves(@PathVariable Integer managerId) {
+		return service.getTeamLeaves(managerId);
+	}
+
+	@PutMapping("/approve/{id}")
+	public String approve(@PathVariable Long id) {
+		return service.approveLeave(id);
+	}
+
+	@PutMapping("/reject/{id}")
+	public String reject(@PathVariable Long id) {
+		return service.rejectLeave(id);
+	}
+
+	@PutMapping("/cancel/{id}")
+	public String cancelLeave(@PathVariable Long id) {
+	    return service.cancelLeave(id);
+	}
+}
+
+nd
+
+
+package com.example.bizx.ics.dto;
+
+import java.time.LocalDate;
+
+public class LeaveRequestDTO {
+
+	private String approverRemarks;
+	private String username;
+
+	private String leaveType;
+
+	private LocalDate fromDate;
+
+	private LocalDate toDate;
+
+	private String dayType;
+
+	private String reason;
+	private String address;
+
+	// ================= GETTERS & SETTERS =================
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getLeaveType() {
+		return leaveType;
+	}
+
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
+	}
+
+	public LocalDate getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(LocalDate fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public LocalDate getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(LocalDate toDate) {
+		this.toDate = toDate;
+	}
+
+	public String getDayType() {
+		return dayType;
+	}
+
+	public void setDayType(String dayType) {
+		this.dayType = dayType;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getApproverRemarks() {
+		return approverRemarks;
+	}
+
+	public void setApproverRemarks(String approverRemarks) {
+		this.approverRemarks = approverRemarks;
+	}
+
+}
+
+nd
+
+
+package com.example.bizx.ics.LeaveEntity;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class LeaveRequest {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	// Employee ID
+	private Integer userId;
+
+	// Manager ID
+	private Integer managerId;
+
+	private String leaveType;
+
+	private LocalDate fromDate;
+
+	private LocalDate toDate;
+
+	private double days;
+
+	private String dayType;
+
+	private String reason;
+
+	private String status;
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	private String address;
+
+	// New Field
+	private String approverRemarks;
+
+	private LocalDateTime appliedOn;
+
+	// ================= GETTERS & SETTERS =================
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public Integer getManagerId() {
+		return managerId;
+	}
+
+	public void setManagerId(Integer managerId) {
+		this.managerId = managerId;
+	}
+
+	public String getLeaveType() {
+		return leaveType;
+	}
+
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
+	}
+
+	public LocalDate getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(LocalDate fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public LocalDate getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(LocalDate toDate) {
+		this.toDate = toDate;
+	}
+
+	public double getDays() {
+		return days;
+	}
+
+	public void setDays(double days) {
+		this.days = days;
+	}
+
+	public String getDayType() {
+		return dayType;
+	}
+
+	public void setDayType(String dayType) {
+		this.dayType = dayType;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getApproverRemarks() {
+		return approverRemarks;
+	}
+
+	public void setApproverRemarks(String approverRemarks) {
+		this.approverRemarks = approverRemarks;
+	}
+
+	public LocalDateTime getAppliedOn() {
+		return appliedOn;
+	}
+
+	public void setAppliedOn(LocalDateTime appliedOn) {
+		this.appliedOn = appliedOn;
+	}
+}
+
+nd
+
+package com.example.bizx.ics.LeaveRepository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.bizx.ics.LeaveEntity.LeaveRequest;
+
+public interface LeaveRepository extends JpaRepository<LeaveRequest, Long> {
+
+	List<LeaveRequest> findByUserId(Integer userId);
+
+	List<LeaveRequest> findByManagerId(Integer managerId);
+}
+
+nd
+
+package com.example.bizx.ics.service;
+
+import java.util.List;
+
+import com.example.bizx.ics.LeaveEntity.LeaveRequest;
+import com.example.bizx.ics.dto.LeaveRequestDTO;
+
+public interface LeaveService {
+	String cancelLeave(Long id);
+
+	String applyLeave(LeaveRequestDTO dto);
+
+	List<LeaveRequest> getMyLeaves(String username);
+
+	List<LeaveRequest> getTeamLeaves(Integer managerId);
+
+	String approveLeave(Long id);
+
+	String rejectLeave(Long id);
+}
+
+nd
+
+package com.example.bizx.ics.service.impl;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.bizx.ics.LeaveEntity.LeaveRequest;
+import com.example.bizx.ics.LeaveRepository.LeaveRepository;
+import com.example.bizx.ics.UserEntity.LoginEntity;
+import com.example.bizx.ics.UserRepository.LoginRepository;
+import com.example.bizx.ics.dto.LeaveRequestDTO;
+import com.example.bizx.ics.service.LeaveService;
+
+@Service
+public class LeaveServiceImpl implements LeaveService {
+
+	@Autowired
+	private LeaveRepository leaveRepo;
+
+	@Autowired
+	private LoginRepository userRepo;
+
+	// =========================
+	// APPLY LEAVE
+	@Override
+	public String applyLeave(LeaveRequestDTO dto) {
+
+		LoginEntity user = userRepo.findByUsername(dto.getUsername());
+
+		if (user == null) {
+			throw new RuntimeException("User not found");
+		}
+
+		double days = calculateDays(dto);
+
+		LeaveRequest lr = new LeaveRequest();
+
+		lr.setUserId(user.getId());
+		lr.setManagerId(user.getManagerId());
+		lr.setLeaveType(dto.getLeaveType());
+		lr.setFromDate(dto.getFromDate());
+		lr.setToDate(dto.getToDate());
+		lr.setDays(days);
+		lr.setDayType(dto.getDayType());
+		lr.setReason(dto.getReason());
+		lr.setAddress(dto.getAddress());
+		lr.setStatus("PENDING");
+		lr.setAppliedOn(LocalDateTime.now());
+
+		leaveRepo.save(lr);
+
+		return "Leave Applied Successfully";
+	}
+
+	// =========================
+	// CALCULATE DAYS
+	// =========================
+	private double calculateDays(LeaveRequestDTO dto) {
+
+		long diff = ChronoUnit.DAYS.between(dto.getFromDate(), dto.getToDate()) + 1;
+
+		if (diff == 1) {
+			if ("FULL".equals(dto.getDayType())) {
+				return 1;
+			} else {
+				return 0.5;
+			}
+		}
+
+		return diff;
+	}
+
+	// =========================
+	// MY LEAVES (EMPLOYEE)
+	// =========================
+	@Override
+	public List<LeaveRequest> getMyLeaves(String username) {
+
+		LoginEntity user = userRepo.findByUsername(username);
+
+		if (user == null) {
+			throw new RuntimeException("User not found");
+		}
+
+		return leaveRepo.findByUserId(user.getId());
+	}
+
+	// =========================
+	// TEAM LEAVES (MANAGER)
+	// =========================
+	@Override
+	public List<LeaveRequest> getTeamLeaves(Integer managerId) {
+
+		System.out.println("========== TEAM LEAVES ==========");
+		System.out.println("Manager ID Received = " + managerId);
+
+		List<LeaveRequest> leaves = leaveRepo.findByManagerId(managerId);
+
+		System.out.println("Leaves Found = " + leaves.size());
+
+		return leaves;
+	}
+
+	// =========================
+	// APPROVE LEAVE
+	// =========================
+	@Override
+	public String approveLeave(Long id) {
+
+		LeaveRequest leave = leaveRepo.findById(id).orElseThrow(() -> new RuntimeException("Leave not found"));
+
+		if ("APPROVED".equals(leave.getStatus())) {
+			return "Already approved";
+		}
+
+		leave.setStatus("APPROVED");
+		leave.setApproverRemarks("Approved by Manager");
+
+		leaveRepo.save(leave);
+
+		// 🔥 Deduct balance ONLY on approval
+		if (!"LOP".equals(leave.getLeaveType())) {
+
+			LoginEntity user = userRepo.findById(leave.getUserId())
+					.orElseThrow(() -> new RuntimeException("User not found"));
+
+			double days = leave.getDays();
+
+			switch (leave.getLeaveType()) {
+
+			case "Privilege Leave":
+				user.setPrivilegeLeaveBalance(user.getPrivilegeLeaveBalance() - days);
+				break;
+
+			case "Casual / Sick Leave":
+				user.setCasualLeaveBalance(user.getCasualLeaveBalance() - days);
+				break;
+
+			case "Adoption Leave":
+				user.setAdoptionLeaveBalance(user.getAdoptionLeaveBalance() - days);
+				break;
+
+			case "Bereavement Leave":
+				user.setBereavementLeaveBalance(user.getBereavementLeaveBalance() - days);
+				break;
+
+			case "Paternity Leave":
+				user.setPaternityLeaveBalance(user.getPaternityLeaveBalance() - days);
+				break;
+			}
+
+			userRepo.save(user);
+		}
+
+		return "Leave Approved Successfully";
+	}
+
+	// =========================
+	// REJECT LEAVE
+	// =========================
+	@Override
+	public String rejectLeave(Long id) {
+
+		LeaveRequest leave = leaveRepo.findById(id).orElseThrow(() -> new RuntimeException("Leave not found"));
+
+		leave.setStatus("REJECTED");
+		leave.setApproverRemarks("Rejected by Manager");
+
+		leaveRepo.save(leave);
+
+		return "Leave Rejected Successfully";
+	}
+
+	@Override
+	public String cancelLeave(Long id) {
+
+		LeaveRequest leave = leaveRepo.findById(id).orElseThrow(() -> new RuntimeException("Leave not found"));
+
+		if (!"PENDING".equals(leave.getStatus())) {
+			throw new RuntimeException("Only pending leaves can be cancelled");
+		}
+
+		leave.setStatus("CANCELLED");
+		leave.setApproverRemarks("Cancelled by Employee");
+
+		leaveRepo.save(leave);
+
+		return "Leave Cancelled Successfully";
+	}
+}
+
+nd
+
+================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+package com.example.bizx.ics.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.bizx.ics.UserEntity.LoginEntity;
+import com.example.bizx.ics.dto.LoginRequestDTO;
+import com.example.bizx.ics.dto.LoginResponseDTO;
+import com.example.bizx.ics.dto.RegisterRequestDTO;
+import com.example.bizx.ics.service.UserService;
+import com.example.bizx.ics.dto.RegisterRequestDTO;
+
+//@CrossOrigin(origins = "http://localhost:3000")
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+	@Autowired
+	private UserService service;
+
+	
+	
+	
+	@GetMapping
+	public List<LoginEntity> getAllUsers() {
+		return service.getAllUsers();
+	}
+
+	@GetMapping("/username/{username}")
+	public LoginEntity getByUsername(@PathVariable String username) {
+		return service.getByUsername(username);
+	}
+
+	@GetMapping("/id/{id}")
+	public LoginEntity getById(@PathVariable Integer id) {
+		return service.getById(id);
+	}
+
+//	@PostMapping("/register")
+//	public LoginResponseDTO register(@RequestBody LoginEntity user) {
+//		return service.register(user);
+//	}
+
+	@PostMapping("/register")
+	public LoginResponseDTO register(@RequestBody RegisterRequestDTO dto) {
+
+		LoginEntity user = new LoginEntity();
+
+		user.setFirstname(dto.getFirstname());
+		user.setLastname(dto.getLastname());
+		user.setUsername(dto.getUsername());
+		user.setPassword(dto.getPassword());
+		user.setEmail(dto.getEmail());
+		user.setPhone(dto.getPhone());
+
+		return service.register(user);
+	}
+
+	@PostMapping("/login")
+	public LoginResponseDTO login(@RequestBody LoginRequestDTO dto) {
+		return service.login(dto);
+	}
+
+	@PutMapping("/resetpassword")
+	public LoginResponseDTO resetPassword(@RequestBody LoginRequestDTO dto) {
+		return service.resetPassword(dto);
+	}
+}
+
+nd
+
+package com.example.bizx.ics.dto;
+
+public class LoginRequestDTO {
+
+	private String username;
+	private String password;
+
+	public LoginRequestDTO() {
+	}
+
+	public LoginRequestDTO(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+}
+
+nd
+
+package com.example.bizx.ics.dto;
+
+public class LoginResponseDTO {
+
+	private String message;
+	private Integer userId;
+	private String username;
+
+	public LoginResponseDTO() {
+	}
+
+	public LoginResponseDTO(String message) {
+		this.message = message;
+	}
+
+	public LoginResponseDTO(String message, Integer userId, String username) {
+		this.message = message;
+		this.userId = userId;
+		this.username = username;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+}
+
+
+
+nd
+
+
+package com.example.bizx.ics.dto;
+
+public class RegisterRequestDTO {
+    private String firstname;
+    private String lastname;
+    private String username;
+    private String password;
+    private String email;
+    private String phone;
+
+    public String getFirstname() { return firstname; }
+    public void setFirstname(String firstname) { this.firstname = firstname; }
+
+    public String getLastname() { return lastname; }
+    public void setLastname(String lastname) { this.lastname = lastname; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+}
+
+nd
+
+
+package com.example.bizx.ics.service;
+
+import java.util.List;
+
+import com.example.bizx.ics.UserEntity.LoginEntity;
+import com.example.bizx.ics.dto.LoginRequestDTO;
+import com.example.bizx.ics.dto.LoginResponseDTO;
+
+public interface UserService {
+
+	List<LoginEntity> getAllUsers();
+
+	LoginEntity getByUsername(String username);
+
+	LoginEntity getById(Integer id);
+
+	LoginResponseDTO register(LoginEntity user);
+
+	LoginResponseDTO login(LoginRequestDTO dto);
+
+	LoginResponseDTO resetPassword(LoginRequestDTO dto);
+}
+
+nd
+
+
+package com.example.bizx.ics.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.bizx.ics.UserEntity.LoginEntity;
+import com.example.bizx.ics.UserRepository.LoginRepository;
+import com.example.bizx.ics.dto.LoginRequestDTO;
+import com.example.bizx.ics.dto.LoginResponseDTO;
+import com.example.bizx.ics.exception.InvalidCredentialsException;
+import com.example.bizx.ics.exception.UserNotFoundException;
+import com.example.bizx.ics.service.UserService;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private LoginRepository repo;
+
+	@Override
+	public List<LoginEntity> getAllUsers() {
+		return repo.findAll();
+	}
+
+	@Override
+	public LoginEntity getByUsername(String username) {
+		return repo.findByUsername(username);
+	}
+
+	@Override
+	public LoginEntity getById(Integer id) {
+		return repo.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+	}
+
+//	@Override
+//	public LoginResponseDTO register(LoginEntity user) {
+//
+//		if (repo.findByUsername(user.getUsername()) != null) {
+//			throw new IllegalArgumentException("Username already exists");
+//		}
+//
+//		repo.save(user);
+//		return new LoginResponseDTO("Registration Successful");
+//	}
+
+	@Override
+	public LoginResponseDTO register(LoginEntity user) {
+
+		if (repo.findByUsername(user.getUsername()) != null) {
+			throw new IllegalArgumentException("Username already exists");
+		}
+
+		// Default values for newly registered users
+		user.setRole("EMPLOYEE");
+		user.setStatus("ACTIVE");
+
+		repo.save(user);
+
+		return new LoginResponseDTO("Registration Successful");
+	}
+
+	@Override
+	public LoginResponseDTO login(LoginRequestDTO dto) {
+
+		LoginEntity user = repo.findByUsername(dto.getUsername());
+
+		if (user == null) {
+			throw new UserNotFoundException("User not found");
+		}
+
+		if (dto.getPassword() == null || !user.getPassword().equals(dto.getPassword())) {
+			throw new InvalidCredentialsException("Invalid credentials");
+		}
+
+		return new LoginResponseDTO("Login Successful");
+	}
+
+	@Override
+	public LoginResponseDTO resetPassword(LoginRequestDTO dto) {
+
+		LoginEntity user = repo.findByUsername(dto.getUsername());
+
+		if (user == null) {
+			throw new UserNotFoundException("User not found");
+		}
+
+		user.setPassword(dto.getPassword());
+		repo.save(user);
+
+		return new LoginResponseDTO("Password reset successful");
+	}
+}
+
+nd
+
+package com.example.bizx.ics.UserEntity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "users")
+public class LoginEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+
+	
+	public double getPrivilegeLeaveBalance() {
+		return privilegeLeaveBalance;
+	}
+
+	public void setPrivilegeLeaveBalance(double privilegeLeaveBalance) {
+		this.privilegeLeaveBalance = privilegeLeaveBalance;
+	}
+
+	public double getCasualLeaveBalance() {
+		return casualLeaveBalance;
+	}
+
+	public void setCasualLeaveBalance(double casualLeaveBalance) {
+		this.casualLeaveBalance = casualLeaveBalance;
+	}
+
+	public double getAdoptionLeaveBalance() {
+		return adoptionLeaveBalance;
+	}
+
+	public void setAdoptionLeaveBalance(double adoptionLeaveBalance) {
+		this.adoptionLeaveBalance = adoptionLeaveBalance;
+	}
+
+	public double getBereavementLeaveBalance() {
+		return bereavementLeaveBalance;
+	}
+
+	public void setBereavementLeaveBalance(double bereavementLeaveBalance) {
+		this.bereavementLeaveBalance = bereavementLeaveBalance;
+	}
+
+	public double getPaternityLeaveBalance() {
+		return paternityLeaveBalance;
+	}
+
+	public void setPaternityLeaveBalance(double paternityLeaveBalance) {
+		this.paternityLeaveBalance = paternityLeaveBalance;
+	}
+
+	private double privilegeLeaveBalance;
+	private double casualLeaveBalance;
+	private double adoptionLeaveBalance;
+	private double bereavementLeaveBalance;
+	private double paternityLeaveBalance;
+	private String firstname;
+	private String lastname;
+
+	@Column(unique = true)
+	private String username;
+
+	private String password;
+
+	@Column(unique = true)
+	private String email;
+
+	private String phone;
+
+	private String role;
+
+	private String bu;
+
+	@Column(name = "bu_head")
+	private String buHead;
+
+	private String cubical;
+
+	private String designation;
+
+	private String extension;
+
+	private String location;
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getBu() {
+		return bu;
+	}
+
+	public void setBu(String bu) {
+		this.bu = bu;
+	}
+
+	public String getBuHead() {
+		return buHead;
+	}
+
+	public void setBuHead(String buHead) {
+		this.buHead = buHead;
+	}
+
+	public String getCubical() {
+		return cubical;
+	}
+
+	public void setCubical(String cubical) {
+		this.cubical = cubical;
+	}
+
+	public String getDesignation() {
+		return designation;
+	}
+
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+
+	public String getExtension() {
+		return extension;
+	}
+
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getManager() {
+		return manager;
+	}
+
+	public void setManager(String manager) {
+		this.manager = manager;
+	}
+
+	public String getSbu() {
+		return sbu;
+	}
+
+	public void setSbu(String sbu) {
+		this.sbu = sbu;
+	}
+
+	public String getSbuHead() {
+		return sbuHead;
+	}
+
+	public void setSbuHead(String sbuHead) {
+		this.sbuHead = sbuHead;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Integer getManagerId() {
+		return managerId;
+	}
+
+	public void setManagerId(Integer managerId) {
+		this.managerId = managerId;
+	}
+
+	private String manager;
+
+	private String sbu;
+
+	@Column(name = "sbu_head")
+	private String sbuHead;
+
+	private String status;
+
+	@Column(name = "manager_id")
+	private Integer managerId;
+
+	public LoginEntity() {
+
+	}
+
+	public LoginEntity(String firstname, String lastname, String username, String password, String phone,
+			String email) {
+
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.username = username;
+		this.password = password;
+		this.phone = phone;
+		this.email = email;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+}
+
+
+nd
+
+package com.example.bizx.ics.UserRepository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.bizx.ics.UserEntity.LoginEntity;
+
+public interface LoginRepository extends JpaRepository<LoginEntity, Integer> {
+
+	LoginEntity findByUsername(String username);
+
+	LoginEntity findByUsernameIgnoreCase(String username);
+
+}
+
+
+
+
+================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+package com.example.bizx.ics.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(InvalidCredentialsException.class)
+	public ResponseEntity<String> handleInvalidCredentials(InvalidCredentialsException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<String> handleGeneral(Exception ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+}
+
+
+
+nd
+
+package com.example.bizx.ics.exception;
+
+public class InvalidCredentialsException extends RuntimeException {
+    public InvalidCredentialsException(String message) {
+        super(message);
+    }
+}
+
+nd
+
+package com.example.bizx.ics.exception;
+
+public class UserAlreadyExistsException extends RuntimeException {
+    public UserAlreadyExistsException(String message) {
+        super(message);
+    }
+}
+
+nd
+
+package com.example.bizx.ics.exception;
+
+public class UserNotFoundException extends RuntimeException {
+	public UserNotFoundException(String message) {
+		super(message);
+	}
+}
+
+
+
+
+

@@ -1,0 +1,80 @@
+﻿/* Higher than 1200 (desktop devices)
+====================================================================== */
+@media (min-width: 1200px) {
+}
+
+
+
+/* Higher than 960 (desktop devices)
+====================================================================== */
+@media only screen and (min-width: 980px) and (max-width: 1199px) {
+}
+
+
+/* Tablet Portrait (devices and browsers)
+====================================================================== */
+@media only screen and (min-width: 768px) and (max-width: 979px) {
+}
+
+/* All Mobile Sizes (devices and browser)
+====================================================================== */
+@media only screen and (max-width: 767px) {
+}
+
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers)
+====================================================================== */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+
+
+
+}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers)
+=================================================================== */
+@media only screen and (max-width: 479px) {
+    .signIn-container .bixLogo img {
+        width: 60% !important;
+    }
+
+    .bixAppsLogo img {
+        width: 26%;
+    }
+
+    .mat-elevation-z8 {
+        overflow-x: scroll !important;
+    }
+
+    .mat-cell, .mat-header-cell {
+        flex: 1;
+        overflow: visible !important;
+        word-wrap: normal !important;
+    }
+
+    mat-card .mat-table {
+        width: auto !important;
+    }
+
+    .mat-paginator-page-size, .mat-paginator-range-actions {
+        display: block !important;
+    }
+    .bixAppsLogo {
+        left: 45% !important;
+    }
+    button.modle-selct-btn.mat-button {
+        display:none;
+    }
+    .dashboardList-header .LftRecutritFilterArea.col-xs {
+        width: 100%;
+    }
+    .dashboardList-header .dashFilterArea {
+        width: 100%;
+        padding-left: 12px;
+        text-align: left;
+    }
+
+    .new-SR-Block-Main .new-SR-Block-Main .depMainName {
+        width: 100%;
+    }
+
+}

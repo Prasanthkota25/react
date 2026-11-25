@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TripDesk — Corporate Travel Request</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <span class="logo-icon">✈</span>
+      <span class="logo-text">TripDesk</span>
+    </div>
+    <div class="nav-links">
+      <a href="#">My Requests</a>
+      <a href="#">History</a>
+      <a href="#">Help</a>
+    </div>
+    <div class="nav-user">
+      <div class="avatar">JD</div>
+      <span>John Doe</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO BANNER -->
+<div class="hero-banner">
+  <div class="hero-content">
+    <h1>Corporate Travel Request</h1>
+    <p>Complete all sections below and submit for approval</p>
+  </div>
+  <div class="hero-decoration">
+    <div class="deco-circle c1"></div>
+    <div class="deco-circle c2"></div>
+    <div class="deco-circle c3"></div>
+  </div>
+</div>
+
+<!-- STICKY STEP PROGRESS -->
+<div class="stepper-bar" id="stepperBar">
+  <div class="stepper-inner" id="stepperInner">
+    <!-- built by JS -->
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-wrap">
+
+  <!-- SECTION 1: TRAVEL INFORMATION -->
+  <section class="form-section" id="sec1">
+    <div class="sec-header">
+      <div class="sec-num">01</div>
+      <div>
+        <h2>Travel Information</h2>
+        <p>Provide the basic details of your trip</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="field-row row-3">
+        <div class="field full-span">
+          <label>Type of Travel <span class="req">*</span></label>
+          <div class="radio-pill-group">
+            <label class="radio-pill">
+              <input type="radio" name="travelType" value="domestic" id="domestic">
+              <span>🏠 Domestic</span>
+            </label>
+            <label class="radio-pill">
+              <input type="radio" name="travelType" value="international" id="international">
+              <span>🌍 International</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="field-row row-3">
+        <div class="field">
+          <label>Start Date <span class="req">*</span></label>
+          <input type="date" id="startDate" class="inp">
+        </div>
+        <div class="field">
+          <label>End Date <span class="req">*</span></label>
+          <input type="date" id="endDate" class="inp">
+        </div>
+        <div class="field">
+          <label>Travel Purpose <span class="req">*</span></label>
+          <select id="travelPurpose" class="inp">
+            <option value="">Select purpose</option>
+            <option>Auditing</option>
+            <option>Business Meetings</option>
+            <option>Client Meeting</option>
+            <option>Conference</option>
+            <option>Follow Suppliers</option>
+            <option>On-Site Transfer</option>
+            <option>Service jobs</option>
+            <option>Relocation</option>
+            <option>Visa Interview</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Reason <span class="req">*</span> <span class="label-hint">Why is physical presence required? Why not phone call / Webex?</span></label>
+          <textarea id="reason" class="inp" rows="3" placeholder="Explain why this trip is necessary..."></textarea>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Additional Information <span class="req">*</span> <span class="label-hint">Deliverables expected after travel</span></label>
+          <textarea id="addInfo" class="inp" rows="3" placeholder="What outcomes or deliverables are expected..."></textarea>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: KYC DOCUMENTS -->
+  <section class="form-section" id="sec2">
+    <div class="sec-header">
+      <div class="sec-num">02</div>
+      <div>
+        <h2>KYC Documents</h2>
+        <p>Identity verification for international travel</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="info-banner" id="kycNote">
+        <span class="info-icon">ℹ</span>
+        <span>This section is <strong>applicable only for International travel</strong>. If your trip is domestic, you may skip this section.</span>
+      </div>
+      <div id="kycFields" class="hidden">
+        <div class="field-row row-3">
+          <div class="field">
+            <label>Passport Number <span class="req">*</span></label>
+            <input type="text" class="inp" placeholder="e.g. A1234567">
+          </div>
+          <div class="field">
+            <label>Passport Expiry Date <span class="req">*</span></label>
+            <input type="date" class="inp">
+          </div>
+          <div class="field">
+            <label>Visa Type</label>
+            <select class="inp">
+              <option value="">Select visa type</option>
+              <option>Business Visa</option>
+              <option>Tourist Visa</option>
+              <option>Work Permit</option>
+              <option>Transit Visa</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row row-2">
+          <div class="field">
+            <label>Upload Passport Copy</label>
+            <div class="file-drop" onclick="this.querySelector('input').click()">
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
+              <div class="file-drop-content">
+                <span class="file-icon">📄</span>
+                <span>Drop file or click to upload</span>
+                <span class="file-hint">PDF, JPG, PNG accepted</span>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Upload Visa Copy</label>
+            <div class="file-drop" onclick="this.querySelector('input').click()">
+              <input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none">
+              <div class="file-drop-content">
+                <span class="file-icon">📄</span>
+                <span>Drop file or click to upload</span>
+                <span class="file-hint">PDF, JPG, PNG accepted</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: RESERVATION DETAILS -->
+  <section class="form-section" id="sec3">
+    <div class="sec-header">
+      <div class="sec-num">03</div>
+      <div>
+        <h2>Reservation Details</h2>
+        <p>Flight, train, bus or cab booking details</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Trip Type <span class="req">*</span></label>
+          <div class="radio-pill-group">
+            <label class="radio-pill">
+              <input type="radio" name="tripType" value="round">
+              <span>🔄 Round Trip</span>
+            </label>
+            <label class="radio-pill">
+              <input type="radio" name="tripType" value="oneway">
+              <span>➡ One Way Trip</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="pref-row">
+        <div class="field">
+          <label>Food Preference</label>
+          <div class="radio-pill-group small">
+            <label class="radio-pill"><input type="radio" name="food" value="veg"><span>🥗 Veg</span></label>
+            <label class="radio-pill"><input type="radio" name="food" value="nonveg"><span>🍗 Non-Veg</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Seat Preference</label>
+          <div class="radio-pill-group small">
+            <label class="radio-pill"><input type="radio" name="seat" value="window"><span>🪟 Window</span></label>
+            <label class="radio-pill"><input type="radio" name="seat" value="aisle"><span>💺 Aisle</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Traveldesk Location <span class="req">*</span></label>
+          <select class="inp">
+            <option>Bangalore - Campus</option>
+            <option>Mumbai - Office</option>
+            <option>Chennai - Office</option>
+            <option>Hyderabad - Campus</option>
+            <option>Delhi - Office</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <div class="table-actions">
+          <span class="table-label">Legs of Journey</span>
+          <button class="add-row-btn" onclick="addResRow()">+ Add Leg</button>
+        </div>
+        <div class="responsive-table-wrap">
+          <table class="data-table" id="resTable">
+            <thead>
+              <tr>
+                <th>Mode</th>
+                <th>Date</th>
+                <th>From Country</th>
+                <th>From State</th>
+                <th>From City</th>
+                <th>From Airport</th>
+                <th>To Country</th>
+                <th>To State</th>
+                <th>To City</th>
+                <th>To Airport</th>
+                <th>Departure</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="resBody">
+              <!-- rows by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: UBER FOR BUSINESS -->
+  <section class="form-section" id="sec4">
+    <div class="sec-header">
+      <div class="sec-num">04</div>
+      <div>
+        <h2>Uber for Business</h2>
+        <p>Local cab arrangement during the trip</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="service-card">
+        <div class="service-icon">🚗</div>
+        <div class="service-info">
+          <strong>Uber for Business</strong>
+          <span>I will be using Uber for Business during this trip</span>
+        </div>
+        <div class="service-toggle">
+          <div class="radio-pill-group small">
+            <label class="radio-pill"><input type="radio" name="uber" value="required" id="uberReq" onchange="toggleUber(true)" checked><span>Required</span></label>
+            <label class="radio-pill"><input type="radio" name="uber" value="not" id="uberNot" onchange="toggleUber(false)"><span>Not Required</span></label>
+          </div>
+        </div>
+      </div>
+      <div id="uberSection">
+        <div class="table-section">
+          <div class="table-actions">
+            <span class="table-label">Uber Trips</span>
+            <button class="add-row-btn" onclick="addUberRow()">+ Add Trip</button>
+          </div>
+          <div class="responsive-table-wrap">
+            <table class="data-table" id="uberTable">
+              <thead>
+                <tr><th>Travel Date</th><th>City</th><th>From Location</th><th>To Location</th><th></th></tr>
+              </thead>
+              <tbody id="uberBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: ACCOMMODATION -->
+  <section class="form-section" id="sec5">
+    <div class="sec-header">
+      <div class="sec-num">05</div>
+      <div>
+        <h2>Accommodation</h2>
+        <p>Hotel and stay arrangements</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="service-card">
+        <div class="service-icon">🏨</div>
+        <div class="service-info">
+          <strong>Accommodation Reservation</strong>
+          <span>Do you need hotel booking assistance?</span>
+        </div>
+        <div class="service-toggle">
+          <div class="radio-pill-group small">
+            <label class="radio-pill"><input type="radio" name="accom" value="required" id="accomReq" onchange="toggleAccom(true)" checked><span>Required</span></label>
+            <label class="radio-pill"><input type="radio" name="accom" value="not" id="accomNot" onchange="toggleAccom(false)"><span>Not Required</span></label>
+          </div>
+        </div>
+      </div>
+      <div id="accomSection">
+        <div class="table-section">
+          <div class="table-actions">
+            <span class="table-label">Hotel Bookings</span>
+            <button class="add-row-btn" onclick="addAccomRow()">+ Add Hotel</button>
+          </div>
+          <div class="responsive-table-wrap">
+            <table class="data-table" id="accomTable">
+              <thead>
+                <tr><th>Country</th><th>State</th><th>City</th><th>Check-In</th><th>Check-Out</th><th>Room Type</th><th>Persons</th><th>Preferred Hotel</th><th></th></tr>
+              </thead>
+              <tbody id="accomBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: ADVANCE INFORMATION -->
+  <section class="form-section" id="sec6">
+    <div class="sec-header">
+      <div class="sec-num">06</div>
+      <div>
+        <h2>Advance Information</h2>
+        <p>Travel budget and expense advance</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="service-card">
+        <div class="service-icon">💰</div>
+        <div class="service-info">
+          <strong>Advance Required?</strong>
+          <span>Request cash or card advance for travel expenses</span>
+        </div>
+        <div class="service-toggle">
+          <div class="radio-pill-group small">
+            <label class="radio-pill"><input type="radio" name="adv" value="required" id="advReq" onchange="toggleAdv(true)" checked><span>Required</span></label>
+            <label class="radio-pill"><input type="radio" name="adv" value="not" id="advNot" onchange="toggleAdv(false)"><span>Not Required</span></label>
+          </div>
+        </div>
+      </div>
+      <div id="advSection">
+        <div class="field-row row-2" style="margin-bottom:8px">
+          <div class="field">
+            <label>Currency</label>
+            <select class="inp" id="currency">
+              <option>USD</option><option>INR</option><option>EUR</option><option>GBP</option><option>AED</option><option>SGD</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Advance Amount (Cash)</label>
+            <input type="number" class="inp" id="advCash" value="0" oninput="calcTotal()">
+          </div>
+        </div>
+        <div class="expense-grid">
+          <div class="expense-card">
+            <label>Money Card Amount</label>
+            <input type="number" class="inp" id="moneyCard" placeholder="0" oninput="calcTotal()">
+          </div>
+          <div class="expense-card">
+            <label>Accommodation Expense</label>
+            <input type="number" class="inp" id="accomExp" placeholder="0" oninput="calcTotal()">
+          </div>
+          <div class="expense-card">
+            <label>Taxi Expense</label>
+            <input type="number" class="inp" id="taxiExp" placeholder="0" oninput="calcTotal()">
+          </div>
+          <div class="expense-card">
+            <label>Communication Expense</label>
+            <input type="number" class="inp" id="commExp" placeholder="0" oninput="calcTotal()">
+          </div>
+          <div class="expense-card">
+            <label>Visa Expense</label>
+            <input type="number" class="inp" id="visaExp" placeholder="0" oninput="calcTotal()">
+          </div>
+          <div class="expense-card">
+            <label>Other Expense</label>
+            <input type="number" class="inp" id="otherExp" placeholder="0" oninput="calcTotal()">
+          </div>
+        </div>
+        <div class="total-bar">
+          <span>Total Advance Amount</span>
+          <div class="total-amount" id="totalAmount">0.00</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: BILLABLE TYPE -->
+  <section class="form-section" id="sec7">
+    <div class="sec-header">
+      <div class="sec-num">07</div>
+      <div>
+        <h2>Billable Type</h2>
+        <p>Project billing and cost allocation</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Billable Type <span class="req">*</span></label>
+          <div class="radio-pill-group">
+            <label class="radio-pill"><input type="radio" name="billType" value="billable" onchange="toggleBill(true)"><span>💼 Billable</span></label>
+            <label class="radio-pill"><input type="radio" name="billType" value="nonbillable" onchange="toggleBill(false)"><span>🏢 Non Billable</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="field-row row-2">
+        <div class="field">
+          <label>Billable To</label>
+          <select class="inp">
+            <option value="">Select</option>
+            <option>Client</option>
+            <option>Internal</option>
+            <option>Project</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Project</label>
+          <div class="search-input-wrap">
+            <input type="text" class="inp" placeholder="Search project...">
+            <span class="search-icon">🔍</span>
+          </div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Remarks</label>
+          <textarea class="inp" rows="3" placeholder="Any additional remarks or notes..."></textarea>
+        </div>
+      </div>
+      <div id="billDocs" class="hidden">
+        <div class="doc-upload-area">
+          <div class="doc-note">
+            <span>📎</span>
+            <span>Supporting documents accepted: <strong>PDF, JPEG, DOC, DOCX, GIF, ZIP, XLS, JPG, PNG, 7Z</strong></span>
+          </div>
+          <div class="file-drop" onclick="this.querySelector('input').click()">
+            <input type="file" accept=".pdf,.jpeg,.jpg,.doc,.docx,.gif,.zip,.xls,.png,.7z" style="display:none">
+            <div class="file-drop-content">
+              <span class="file-icon">📂</span>
+              <span>Drop supporting document or click to browse</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 8: APPROVALS -->
+  <section class="form-section" id="sec8">
+    <div class="sec-header">
+      <div class="sec-num">08</div>
+      <div>
+        <h2>Approvals Details</h2>
+        <p>Review the approval chain for this request</p>
+      </div>
+    </div>
+    <div class="sec-body">
+      <div class="approvals-grid">
+        <div class="approval-card level1">
+          <div class="approval-level">Level 1</div>
+          <div class="approval-role">Reporting Manager</div>
+          <div class="approval-name">Lemuel Paul</div>
+          <div class="approval-status pending">Pending</div>
+        </div>
+        <div class="approval-connector">→</div>
+        <div class="approval-card level2">
+          <div class="approval-level">Level 2</div>
+          <div class="approval-role">Project Manager</div>
+          <div class="approval-name">Prranjul Srivastavv sri</div>
+          <div class="approval-status pending">Pending</div>
+        </div>
+        <div class="approval-connector">→</div>
+        <div class="approval-card level3">
+          <div class="approval-level">Level 3</div>
+          <div class="approval-role">SBU Head</div>
+          <div class="approval-name">Lemuel Paul</div>
+          <div class="approval-status pending">Pending</div>
+        </div>
+        <div class="approval-connector">→</div>
+        <div class="approval-card level4">
+          <div class="approval-level">Level 4</div>
+          <div class="approval-role">BU Head</div>
+          <div class="approval-name">Jai Gautam Mohan</div>
+          <div class="approval-status pending">Pending</div>
+        </div>
+      </div>
+      <div class="declaration-box">
+        <label class="checkbox-label">
+          <input type="checkbox" id="declare">
+          <span>I declare that all the information provided is accurate and this travel is essential for official business purposes.</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUBMIT ROW -->
+  <div class="submit-bar">
+    <div class="submit-info">
+      <span id="completionText">Fill all required fields to submit</span>
+    </div>
+    <div class="submit-actions">
+      <button class="btn-save" onclick="saveDraft()">Save Draft</button>
+      <button class="btn-submit" onclick="submitForm()">Submit Request →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-icon">✅</div>
+    <h2>Request Submitted!</h2>
+    <p>Your travel request has been submitted successfully and is pending approval from your Reporting Manager.</p>
+    <div class="modal-ref">Reference ID: <strong id="refId"></strong></div>
+    <button class="btn-submit" onclick="closeModal()">Back to Dashboard</button>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
